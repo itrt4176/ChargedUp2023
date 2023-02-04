@@ -19,5 +19,15 @@ public final class Constants {
     public final static int LEFT_TWO = 12;
     public final static int RIGHT_ONE = 13;
     public final static int RIGHT_TWO = 14;
-}
+    }
+ 
+    public static final class ArmVals{
+        public final static int ARM_ROTATOR = 15;
+        public final static int ARM_EXTENDER = 16;
+    }
+
+    public static final class ClawVals{
+        public final static int CLAW_ONE = 17;
+        public final static int CLAW_TWO = 18;
+    }
 }
