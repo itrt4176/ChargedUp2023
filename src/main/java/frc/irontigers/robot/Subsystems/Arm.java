@@ -18,14 +18,14 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   private WPI_TalonFX armRotator;
-  // private WPI_TalonFX armExtender;
+  private WPI_TalonFX armExtender;
 
   private DoubleLogEntry armPositionLog;
   private DoubleLogEntry armExtensionLog;
 
   public Arm() {
     armRotator = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR);
-    // armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
+    armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
 
     DataLog log = DataLogManager.getLog();{
       armPositionLog = new DoubleLogEntry(log, "arm/position");
@@ -33,7 +33,7 @@ public class Arm extends SubsystemBase {
     }
 
     armRotator.setNeutralMode(NeutralMode.Brake);
-    // armExtender.setNeutralMode(NeutralMode.Brake);
+    armExtender.setNeutralMode(NeutralMode.Brake);
   }
 
   
@@ -42,7 +42,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void setExtensionSpeed(double speed) {
-    // armExtender.set(speed);
+    armExtender.set(speed);
   }
 
   public double getRotatorPosition() {
@@ -54,16 +54,16 @@ public class Arm extends SubsystemBase {
 
 
    public double getArmExtensionPosition() {
-    //  double extensionPosition = armExtender.getSelectedSensorPosition();
-    // armExtensionLog.append(extensionPosition);
+     double extensionPosition = armExtender.getSelectedSensorPosition();
+    armExtensionLog.append(extensionPosition);
     
-    // return extensionPosition;
-    return 0;
+    return extensionPosition;
   }
 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    
   }
 }
