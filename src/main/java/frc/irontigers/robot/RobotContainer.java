@@ -50,13 +50,12 @@ public class RobotContainer {
 
   private final Trigger clawIn = clawController.b();
   private final Trigger clawOut = clawController.x();
-  
-  private final Trigger clawsStop = clawController.rightBumper(); 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button binding.
     configureButtonBindings();
+    mainController.setDeadzone(.2);
     driveSystem.setDefaultCommand(joystickDrive);
     arm.setDefaultCommand(armLengthAdjustment);
     //Maybe adjust once arm rotation is coded.
@@ -87,12 +86,6 @@ public class RobotContainer {
     clawOut.onTrue(new InstantCommand(() -> claw.setClawOneSpeed(-.1)));
     clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
-    clawsStop.onTrue(
-      new InstantCommand(() ->{
-        claw.setClawOneSpeed(0);
-       
-      })
-    );
   }
  
  

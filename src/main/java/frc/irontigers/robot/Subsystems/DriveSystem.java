@@ -36,34 +36,34 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   public double gearScalar;
 
 
-  // private IntegerLogEntry gearLog;
-  // private DoubleLogEntry gearScalarLog;
+  private IntegerLogEntry gearLog;
+  private DoubleLogEntry gearScalarLog;
 
-  // private DoubleLogEntry odoxLog;
-  // private DoubleLogEntry odoRotationLog;
+  private DoubleLogEntry odoxLog;
+  private DoubleLogEntry odoRotationLog;
 
   private AHRS gyro = new AHRS();
 
 
-//   DataLog log = DataLogManager.getLog();{
-//   gearLog = new IntegerLogEntry(log,"drive/gear");
-//   gearScalarLog = new DoubleLogEntry(log,"drive/gearScalar");
+  DataLog log = DataLogManager.getLog();{
+  gearLog = new IntegerLogEntry(log,"drive/gear");
+  gearScalarLog = new DoubleLogEntry(log,"drive/gearScalar");
 
-//   odoxLog = new DoubleLogEntry(log,"drive/odometer/x");
-//   odoRotationLog = new DoubleLogEntry(log,"drive/odometer/rotation");
-// }
+  odoxLog = new DoubleLogEntry(log,"drive/odometer/x");
+  odoRotationLog = new DoubleLogEntry(log,"drive/odometer/rotation");
+}
 
-// public DifferentialDriveOdometry geOdometer(){
-//   return odometer;
-// }
+public DifferentialDriveOdometry geOdometer(){
+  return odometer;
+}
 
 
   /** Creates a new DriveSystem. */
   public DriveSystem() {
-    // leftOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    // leftTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    // rightOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    // rightTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    leftOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    leftTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    rightOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    rightTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
     
     setGyro(gyro);
     setMotors(left, right);
@@ -74,7 +74,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     public void drive(double xSpeed, double rotation){
       switch(gear){
         case 0:
-        gearScalar = .25;
+        gearScalar = .3;
         break;
         case 1:
         gearScalar = .5;
@@ -88,29 +88,30 @@ public class DriveSystem extends DifferentialDriveSubsystem {
       }
     super.drive(gearScalar * xSpeed, gearScalar * rotation);
 
-    // gearScalarLog.append(gearScalar);
+    gearScalarLog.append(gearScalar);
     }
 
   public void shiftUp(){
     if(gear < 3){
       gear++;
     }
-    // gearLog.append(gear);
+    gearLog.append(gear);
   }
 
   public void shiftDown(){
     if(gear > 0){
       gear--;
     }
-    // gearLog.append(gear);
+    gearLog.append(gear);
   }
 
-  // public void setIdleMode(CANSparkMax.IdleMode idleMode) {
-  //   leftOne.setIdleMode(idleMode);
-  //   leftTwo.setIdleMode(idleMode);
-  //   rightOne.setIdleMode(idleMode);
-  //   rightTwo.setIdleMode(idleMode);
-  // }
+  public void setIdleMode(CANSparkMax.IdleMode idleMode) {
+    leftOne.setIdleMode(idleMode);
+    leftTwo.setIdleMode(idleMode);
+    rightOne.setIdleMode(idleMode);
+    rightTwo.setIdleMode(idleMode);
+  
+  }
   
 
   @Override
@@ -119,8 +120,8 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     super.periodic();
 
     Pose2d pos = getRobotPosition();
-    // odoxLog.append(pos.getX());
-    // odoRotationLog.append(pos.getRotation().getDegrees());
+    odoxLog.append(pos.getX());
+    odoRotationLog.append(pos.getRotation().getDegrees());
   }
 
   @Override
@@ -133,6 +134,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   protected double getRightDistance() {
     // TODO Auto-generated method stub
     return 0;
+  
   }
 
   @Override

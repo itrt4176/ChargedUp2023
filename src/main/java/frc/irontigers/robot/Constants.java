@@ -27,7 +27,7 @@ public final class Constants {
     }
 
     public static final class ClawVals{
-        public final static int CLAW_ONE = 17;
-        public final static int CLAW_TWO = 18;
+        public final static int CLAW = 17;
+        
     }
 }
