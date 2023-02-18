@@ -35,7 +35,6 @@ public class Arm extends SubsystemBase {
     armRotator.setNeutralMode(NeutralMode.Brake);
     armExtender.setNeutralMode(NeutralMode.Brake);
   }
-
   
   public void setRotationSpeed(double speed) {
      armRotator.set(speed);

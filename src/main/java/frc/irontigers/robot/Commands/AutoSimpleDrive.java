@@ -7,6 +7,7 @@ package frc.irontigers.robot.Commands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.irontigers.robot.Subsystems.DriveSystem;
 
@@ -25,14 +26,14 @@ public class AutoSimpleDrive extends CommandBase {
   @Override
   public void initialize() {
     currentPos = driveSystem.getRobotPosition();
-    destination = currentPos.plus(new Transform2d(currentPos, new Pose2d(null, new Rotation2d())));
+    destination = currentPos.plus(new Transform2d(currentPos, new Pose2d(Units.feetToMeters(3), 0, new Rotation2d())));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     currentPos = driveSystem.getRobotPosition();
-    driveSystem.drive(0, 0);
+    driveSystem.drive(.35, 0);
   }
 
   // Called once the command ends or is interrupted.

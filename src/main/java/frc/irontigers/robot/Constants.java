@@ -4,6 +4,8 @@
 
 package frc.irontigers.robot;
 
+import edu.wpi.first.math.MathUtil;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -19,11 +21,14 @@ public final class Constants {
     public final static int LEFT_TWO = 12;
     public final static int RIGHT_ONE = 13;
     public final static int RIGHT_TWO = 14;
+    public final static double PULSES_TO_DISTANCE_FEET = 1 / 42 * 5.95 * (3.31 / 12 * Math.PI);
     }
  
     public static final class ArmVals{
         public final static int ARM_ROTATOR = 15;
         public final static int ARM_EXTENDER = 16;
+        public final static double PULSES_TO_EXTENSION_METERS = 0;
+        public final static double PULSES_TO_DEGREES = 1 / 200 / 2048 * 360;
     }
 
     public static final class ClawVals{

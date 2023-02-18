@@ -7,8 +7,11 @@ package frc.irontigers.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
+import frc.irontigers.robot.Commands.AutoSimpleDrive;
 import frc.irontigers.robot.Subsystems.Arm;
 import frc.irontigers.robot.Subsystems.Claw;
 import frc.irontigers.robot.Subsystems.DriveSystem;
@@ -96,6 +99,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
+    SequentialCommandGroup drive = new SequentialCommandGroup(
+      new AutoSimpleDrive(driveSystem),
+      new WaitUntilCommand(14.5));
+      
+    return drive;
   }
 }
