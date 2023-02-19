@@ -141,25 +141,28 @@ public DifferentialDriveOdometry geOdometer(){
     odoRotationLog.append(pos.getRotation().getDegrees());
 
     SmartDashboard.putNumber("Robot X", getRobotPosition().getX());
-    SmartDashboard.putNumber("Encoder Pulses", (leftOneEncoder.getPosition() * Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET));
+    SmartDashboard.putNumber("Encoder Pulses", leftOneEncoder.getPosition());
   }
 
   @Override
   protected double getLeftDistance() {
     // TODO Auto-generated method stub
-    return 0;
+    return leftOneEncoder.getPosition();
   }
 
   @Override
   protected double getRightDistance() {
     // TODO Auto-generated method stub
-    return 0;
+    return rightOneEncoder.getPosition();
   
   }
 
   @Override
   protected void resetEncoders() {
     // TODO Auto-generated method stub
-    
+    leftOneEncoder.setPosition(0);
+    leftTwoEncoder.setPosition(0);
+    rightOneEncoder.setPosition(0);
+    rightTwoEncoder.setPosition(0);
   }
 }
