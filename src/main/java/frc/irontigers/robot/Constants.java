@@ -28,7 +28,7 @@ public final class Constants {
         public final static int ARM_ROTATOR = 15;
         public final static int ARM_EXTENDER = 16;
         public final static double PULSES_TO_EXTENSION_METERS = 0;
-        public final static double PULSES_TO_DEGREES = 1 / 200 / 2048 * 360;
+        public final static double PULSES_TO_DEGREES = 1 / 2048 /200 * 360;
     }
 
     public static final class ClawVals{

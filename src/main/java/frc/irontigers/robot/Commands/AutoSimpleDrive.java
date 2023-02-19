@@ -26,7 +26,7 @@ public class AutoSimpleDrive extends CommandBase {
   @Override
   public void initialize() {
     currentPos = driveSystem.getRobotPosition();
-    destination = currentPos.plus(new Transform2d(currentPos, new Pose2d(Units.feetToMeters(3), 0, new Rotation2d())));
+    destination = currentPos.plus(new Transform2d(currentPos, new Pose2d(Units.feetToMeters(5), 0, new Rotation2d())));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
