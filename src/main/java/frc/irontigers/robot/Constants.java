@@ -21,7 +21,7 @@ public final class Constants {
     public final static int LEFT_TWO = 12;
     public final static int RIGHT_ONE = 13;
     public final static int RIGHT_TWO = 14;
-    public final static double PULSES_TO_DISTANCE_FEET = 1 / 42 * 5.95 * (3.31 / 12 * Math.PI);
+    public final static double PULSES_TO_DISTANCE_FEET = 1 / 42 * 5.95 * ((3.31 + (2 * 0.275591)) * Math.PI / 12);
     }
  
     public static final class ArmVals{
