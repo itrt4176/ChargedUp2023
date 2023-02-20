@@ -4,14 +4,19 @@
 
 package frc.irontigers.robot.Subsystems;
 
+import org.yaml.snakeyaml.scanner.Constant;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.irontigers.robot.Constants;
+import frc.irontigers.robot.Constants.ArmVals;
 
 public class Arm extends SubsystemBase {
  
@@ -27,15 +32,27 @@ public class Arm extends SubsystemBase {
     armRotator = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR);
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
 
+
+    
+
     DataLog log = DataLogManager.getLog();{
       armPositionLog = new DoubleLogEntry(log, "arm/position");
       armExtensionLog = new DoubleLogEntry(log, "arm/extension");
     }
 
+    
+
+    
+
     armRotator.setNeutralMode(NeutralMode.Brake);
     armExtender.setNeutralMode(NeutralMode.Brake);
   }
-  
+
+  public double getArmDegrees(){
+    double armPose2d = armRotator.getSelectedSensorPosition() * Constants.ArmVals.PULSES_TO_DEGREES;
+    return armPose2d;
+  }
+     
   public void setRotationSpeed(double speed) {
      armRotator.set(speed);
   }
@@ -63,6 +80,16 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    super.periodic();
+  
+    double armPos = getRotatorPosition() * Constants.ArmVals.PULSES_TO_DEGREES;
+    armPositionLog.append(armPos);
+
+    SmartDashboard.putNumber("Arm Position", armPos);
+
     
+     
   }
+
+  
 }
