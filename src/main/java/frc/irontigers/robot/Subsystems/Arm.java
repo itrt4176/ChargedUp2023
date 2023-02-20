@@ -25,6 +25,8 @@ public class Arm extends SubsystemBase {
   private WPI_TalonFX armRotator;
   private WPI_TalonFX armExtender;
 
+  private Pose2d armRotationPosition;
+
   private DoubleLogEntry armPositionLog;
   private DoubleLogEntry armExtensionLog;
 
@@ -32,7 +34,7 @@ public class Arm extends SubsystemBase {
     armRotator = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR);
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
 
-
+    armRotationPosition = new Pose2d();
     
 
     DataLog log = DataLogManager.getLog();{
@@ -48,9 +50,8 @@ public class Arm extends SubsystemBase {
     armExtender.setNeutralMode(NeutralMode.Brake);
   }
 
-  public double getArmDegrees(){
-    double armPose2d = armRotator.getSelectedSensorPosition() * Constants.ArmVals.PULSES_TO_DEGREES;
-    return armPose2d;
+  public Pose2d getArmDegrees(){
+    return armRotationPosition;
   }
      
   public void setRotationSpeed(double speed) {
@@ -81,14 +82,14 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     super.periodic();
+    getRotatorPosition();
+    getArmDegrees();
   
-    double armPos = getRotatorPosition() * Constants.ArmVals.PULSES_TO_DEGREES;
-    armPositionLog.append(armPos);
-
-    SmartDashboard.putNumber("Arm Position", armPos);
+    Pose2d armPos = getArmDegrees();
+    
 
     
-     
+    SmartDashboard.putNumber("Arm Position", getRotatorPosition());
   }
 
   
