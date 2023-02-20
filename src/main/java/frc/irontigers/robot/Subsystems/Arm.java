@@ -42,10 +42,6 @@ public class Arm extends SubsystemBase {
       armExtensionLog = new DoubleLogEntry(log, "arm/extension");
     }
 
-    
-
-    
-
     armRotator.setNeutralMode(NeutralMode.Brake);
     armExtender.setNeutralMode(NeutralMode.Brake);
   }
