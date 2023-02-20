@@ -23,7 +23,7 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   private WPI_TalonFX armRotator;
-  private WPI_TalonFX armExtender;
+  public WPI_TalonFX armExtender;
 
   private Pose2d armRotationPosition;
 

@@ -6,7 +6,10 @@ package frc.irontigers.robot.Commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.irontigers.robot.Constants;
+import frc.irontigers.robot.Subsystems.Arm.*;
 import frc.irontigers.robot.Subsystems.Arm;
+
 import frc.tigerlib.XboxControllerIT;
 
 public class ArmManualLengthAdjustment extends CommandBase {
@@ -18,6 +21,7 @@ public class ArmManualLengthAdjustment extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     this.arm = arm;
     this.manualController = manualController;
+    
 
     addRequirements(arm);
   }
@@ -30,11 +34,11 @@ public class ArmManualLengthAdjustment extends CommandBase {
   @Override
   public void execute() {
     if ((manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()) < 0) { //if extending
-      if armExtender.getSelectedSensorPosition > constants.DriveSystemVals.ARM_EXTENDER_UPPER_LIMIT {
+      if(arm.armExtender.getSelectedSensorPosition() > Constants.ArmVals.ARM_EXTENDER_UPPER_LIMIT) {
         arm.setExtensionSpeed(0.75*(manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()));
       }
     } else if ((manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()) > 0) { //if retracting
-      if armExtender.getSelectedSensorPosition < constants.DriveSystemVals.ARM_EXTENDER_LOWER_LIMIT {
+      if (arm.armExtender.getSelectedSensorPosition() < Constants.ArmVals.ARM_EXTENDER_LOWER_LIMIT) {
         arm.setExtensionSpeed(0.75*(manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()));
       }
     }
