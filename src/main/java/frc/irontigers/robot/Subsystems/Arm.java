@@ -31,18 +31,11 @@ public class Arm extends SubsystemBase {
   public Arm() {
     armRotator = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR);
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
-
-
     
-
     DataLog log = DataLogManager.getLog();{
       armPositionLog = new DoubleLogEntry(log, "arm/position");
       armExtensionLog = new DoubleLogEntry(log, "arm/extension");
     }
-
-    
-
-    
 
     armRotator.setNeutralMode(NeutralMode.Brake);
     armExtender.setNeutralMode(NeutralMode.Brake);
