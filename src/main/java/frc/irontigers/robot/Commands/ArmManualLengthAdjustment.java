@@ -34,11 +34,11 @@ public class ArmManualLengthAdjustment extends CommandBase {
   @Override
   public void execute() {
     if ((manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()) < 0) { //if extending
-      if(arm.armExtender.getSelectedSensorPosition() > Constants.ArmVals.ARM_EXTENDER_UPPER_LIMIT) {
+      if(arm.getArmExtender().getSelectedSensorPosition() > Constants.ArmVals.ARM_EXTENDER_UPPER_LIMIT) {
         arm.setExtensionSpeed(0.75*(manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()));
       }
     } else if ((manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()) > 0) { //if retracting
-      if (arm.armExtender.getSelectedSensorPosition() < Constants.ArmVals.ARM_EXTENDER_LOWER_LIMIT) {
+      if (arm.getArmExtender().getSelectedSensorPosition() < Constants.ArmVals.ARM_EXTENDER_LOWER_LIMIT) {
         arm.setExtensionSpeed(0.75*(manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()));
       }
     }

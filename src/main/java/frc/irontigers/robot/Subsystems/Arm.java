@@ -23,7 +23,7 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   private WPI_TalonFX armRotator;
-  public WPI_TalonFX armExtender;
+  private WPI_TalonFX armExtender;
 
   private Pose2d armRotationPosition;
 
@@ -44,6 +44,10 @@ public class Arm extends SubsystemBase {
 
     armRotator.setNeutralMode(NeutralMode.Brake);
     armExtender.setNeutralMode(NeutralMode.Brake);
+  }
+
+  public WPI_TalonFX getArmExtender() {
+    return armExtender;
   }
 
   public Pose2d getArmDegrees(){
