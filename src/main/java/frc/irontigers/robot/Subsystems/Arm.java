@@ -25,7 +25,7 @@ public class Arm extends SubsystemBase {
   private WPI_TalonFX armRotator;
   private WPI_TalonFX armExtender;
 
-  private Pose2d armRotationPosition;
+  private double armRotationPosition;
   private Pose2d armExtensionPosition;
 
   private DoubleLogEntry armPositionLog;
@@ -35,9 +35,11 @@ public class Arm extends SubsystemBase {
     armRotator = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR);
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
 
-    armRotationPosition = new Pose2d();
+    armRotationPosition = armRotator.getSelectedSensorPosition()*Constants.ArmVals.PULSES_TO_DEGREES;
     armExtensionPosition = new Pose2d();
     
+    
+
 
     DataLog log = DataLogManager.getLog();{
       armPositionLog = new DoubleLogEntry(log, "arm/position");
@@ -53,7 +55,7 @@ public class Arm extends SubsystemBase {
   }
 
 
-  public Pose2d getArmDegrees(){
+  public double getArmDegrees(){
     return armRotationPosition;
   }
 
@@ -70,6 +72,7 @@ public class Arm extends SubsystemBase {
   public double getRotatorPosition() {
     double position = armRotator.getSelectedSensorPosition();
     armPositionLog.append(position);
+
  
     return position;
   }
@@ -91,14 +94,15 @@ public class Arm extends SubsystemBase {
     getArmExtensionPosition();
     getArmDegrees();
   
-    Pose2d armPos = getArmDegrees();
+    double armPos = getArmDegrees();
     
 
     
-    SmartDashboard.putNumber("Arm Position", getRotatorPosition());
+    SmartDashboard.putNumber("Arm Position", (getRotatorPosition() / 2048 / 200 * 360));
     SmartDashboard.putNumber("Arm Length", getArmExtensionPosition());
 
   }
 
   
+
 }
