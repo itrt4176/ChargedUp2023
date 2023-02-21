@@ -31,7 +31,7 @@ public final class Constants {
         public final static double PULSES_TO_DEGREES = 1 / 2048 / 200 * 360;
         public final static int ARM_EXTENDER_UPPER_LIMIT = -137795; //negative velocity extends motor; upper limit has to be lower than lower limit
         public final static int ARM_EXTENDER_LOWER_LIMIT = -12000;
-        // Six feet high -> -43590
+        // Six feet high -> -57509
     }
 
     public static final class ClawVals{
