@@ -54,8 +54,8 @@ public class RobotContainer {
   private final Trigger armRotationForward = mainController.y();
   private final Trigger armRotationBackward = mainController.a();
  
-   private final Trigger  armSet90 = mainController.povLeft();
-   private final Trigger armSet180 = mainController.povRight();
+  private final Trigger  armSet90 = mainController.povLeft();
+  private final Trigger armSet180 = mainController.povRight();
 
   private final Trigger clawIn = mainController.povUp();
   private final Trigger clawOut = mainController.povDown();
