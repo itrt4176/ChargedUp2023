@@ -8,9 +8,11 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
+import frc.irontigers.robot.Commands.MoveArmToAngle;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
 import frc.irontigers.robot.Subsystems.Arm;
 import frc.irontigers.robot.Subsystems.Claw;
@@ -44,15 +46,21 @@ public class RobotContainer {
   private final Trigger gearShiftDown = mainController.leftBumper();
 
   private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(arm, mainController);
+  private final MoveArmToAngle armSetAngle90 = new MoveArmToAngle(arm, 90);
+  private final MoveArmToAngle armSetAngle180 = new MoveArmToAngle(arm, 180);
 
   private final Trigger toggleInvertButton = mainController.b();
 
   private final Trigger armRotationForward = mainController.y();
   private final Trigger armRotationBackward = mainController.a();
-  private final Trigger armStopRotation = mainController.x();
+ 
+  private final Trigger  armSet90 = mainController.povLeft();
+  private final Trigger armSet180 = mainController.povRight();
 
-  private final Trigger clawIn = clawController.b();
-  private final Trigger clawOut = clawController.x();
+  private final Trigger clawIn = mainController.povUp();
+  private final Trigger clawOut = mainController.povDown();
+
+ 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -83,11 +91,18 @@ public class RobotContainer {
     armRotationBackward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
     // armStopRotation.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
 
-    clawIn.onTrue(new InstantCommand(() -> claw.setClawOneSpeed(.1)));
-    clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
+    armSet90.onTrue(armSetAngle90);
+    armSet180.onTrue(armSetAngle180);
 
-    clawOut.onTrue(new InstantCommand(() -> claw.setClawOneSpeed(-.1)));
-    clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
+    clawIn.whileTrue(new StartEndCommand(
+      () -> claw.setClawOneSpeed(0.75), 
+      () -> claw.setClawOneSpeed(0)));
+    // clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
+
+    clawOut.whileTrue(new StartEndCommand(
+      () -> claw.setClawOneSpeed(-0.75), 
+      () -> claw.setClawOneSpeed(0)));
+    // clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
   }
  

@@ -33,7 +33,7 @@ public class AutoSimpleDrive extends CommandBase {
   @Override
   public void execute() {
     currentPos = driveSystem.getRobotPosition();
-    driveSystem.drive(.35, 0);
+    driveSystem.drive(.35, -.13);
   }
 
   // Called once the command ends or is interrupted.

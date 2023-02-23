@@ -43,7 +43,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   private RelativeEncoder rightTwoEncoder = rightTwo.getEncoder();
 
   public int direction = 1;
-  public int gear = 3;
+  public int gear = 2;
   public double gearScalar;
 
 
@@ -84,23 +84,23 @@ public DifferentialDriveOdometry geOdometer(){
 
     leftOneEncoder.setPositionConversionFactor(Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET);
     leftTwoEncoder.setPositionConversionFactor(Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET);
-    rightOneEncoder.setPositionConversionFactor(Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET);
-    rightTwoEncoder.setPositionConversionFactor(Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET);
+    rightOneEncoder.setPositionConversionFactor(-1 * Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET);
+    rightTwoEncoder.setPositionConversionFactor(-1 * Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET);
   }
 
     public void drive(double xSpeed, double rotation){
       switch(gear){
         case 0:
-        gearScalar = .3;
+        gearScalar = .35;
         break;
         case 1:
         gearScalar = .5;
         break;
         case 2:
-        gearScalar = .75;
+        gearScalar = .65;
         break;
         case 3:
-        gearScalar = 1;
+        gearScalar = .8;
         break;
       }
     super.drive(gearScalar * xSpeed, gearScalar * rotation);
@@ -141,7 +141,8 @@ public DifferentialDriveOdometry geOdometer(){
     odoRotationLog.append(pos.getRotation().getDegrees());
 
     SmartDashboard.putNumber("Robot X", getRobotPosition().getX());
-    SmartDashboard.putNumber("Encoder Pulses", leftOneEncoder.getPosition());
+    SmartDashboard.putNumber("Left", leftOneEncoder.getPosition());
+    SmartDashboard.putNumber("Right", rightOneEncoder.getPosition());
   }
 
   @Override
