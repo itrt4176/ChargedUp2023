@@ -15,41 +15,35 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 public class Claw extends SubsystemBase {
   /** Creates a new Claw. */
-  private WPI_TalonFX clawOne;
-  private WPI_TalonFX clawTwo;
-  private MotorControllerGroup claw;
+  private WPI_TalonFX claw;
+  
 
 
-  private DoubleLogEntry clawOnePositionLog;
-  private DoubleLogEntry clawTwoPositionLog;
+  private DoubleLogEntry clawPositionLog;
+  
 
   public Claw() {
-    clawOne = new WPI_TalonFX(Constants.ClawVals.CLAW_ONE);
-    clawTwo = new WPI_TalonFX(Constants.ClawVals.CLAW_TWO);
-    claw = new MotorControllerGroup(clawOne, clawTwo);
+    claw = new WPI_TalonFX(Constants.ClawVals.CLAW);
+
 
     DataLog log = DataLogManager.getLog();{
-      clawOnePositionLog = new DoubleLogEntry(log, "clawOne/position");
-      clawTwoPositionLog = new DoubleLogEntry(log, "clawTwo/position");
+      clawPositionLog = new DoubleLogEntry(log, "claw/position");
+      
     }
 
-    clawOne.setNeutralMode(NeutralMode.Brake);
-    clawTwo.setNeutralMode(NeutralMode.Brake);
+    claw.setNeutralMode(NeutralMode.Brake);
   }
 
   public void setClawOneSpeed(double speed) {
-    clawOne.set(speed);
+    claw.set(.5 * speed);
   }
 
-  public void setClawTwoSpeed(double speed) {
-    clawTwo.set(speed);
-  }
+ 
 
   public double[] getClawPositions() {
-    double[] clawPositions = {clawOne.getSelectedSensorPosition(), clawTwo.getSelectedSensorPosition()};
-    clawOnePositionLog.append(clawPositions[0]);
-    clawTwoPositionLog.append(clawPositions[1]);
-    
+    double[] clawPositions = {claw.getSelectedSensorPosition()};
+    clawPositionLog.append(clawPositions[0]);
+    clawPositionLog.append(clawPositions[1]);
     return clawPositions;
   }
 
