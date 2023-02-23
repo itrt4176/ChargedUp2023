@@ -95,12 +95,12 @@ public class RobotContainer {
     armSet180.onTrue(armSetAngle180);
 
     clawIn.whileTrue(new StartEndCommand(
-      () -> claw.setClawOneSpeed(0.25), 
+      () -> claw.setClawOneSpeed(0.75), 
       () -> claw.setClawOneSpeed(0)));
     // clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
     clawOut.whileTrue(new StartEndCommand(
-      () -> claw.setClawOneSpeed(-0.25), 
+      () -> claw.setClawOneSpeed(-0.75), 
       () -> claw.setClawOneSpeed(0)));
     // clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 

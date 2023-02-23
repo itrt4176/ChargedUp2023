@@ -25,13 +25,14 @@ public class Claw extends SubsystemBase {
   public Claw() {
     claw = new WPI_TalonFX(Constants.ClawVals.CLAW);
 
+    
 
     DataLog log = DataLogManager.getLog();{
       clawPositionLog = new DoubleLogEntry(log, "claw/position");
       
     }
 
-    claw.setNeutralMode(NeutralMode.Brake);
+    claw.setNeutralMode(NeutralMode .Brake);
   }
 
   public void setClawOneSpeed(double speed) {
