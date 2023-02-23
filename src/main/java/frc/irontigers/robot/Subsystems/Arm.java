@@ -35,7 +35,6 @@ public class Arm extends SubsystemBase {
     armRotator = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR);
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
 
-    armRotationPosition = armRotator.getSelectedSensorPosition()*Constants.ArmVals.PULSES_TO_DEGREES;
     armExtensionPosition = new Pose2d();
     
     
@@ -56,7 +55,7 @@ public class Arm extends SubsystemBase {
 
 
   public double getArmDegrees(){
-    return armRotationPosition;
+    return armRotator.getSelectedSensorPosition() * Constants.ArmVals.PULSES_TO_DEGREES;
   }
 
   
@@ -76,6 +75,9 @@ public class Arm extends SubsystemBase {
  
     return position;
   }
+  public void setRotatorPosition(){
+    
+  }
 
 
    public double getArmExtensionPosition() {
@@ -89,16 +91,10 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    super.periodic();
-    getRotatorPosition();
-    getArmExtensionPosition();
-    getArmDegrees();
-  
-    double armPos = getArmDegrees();
     
 
     
-    SmartDashboard.putNumber("Arm Position", (getRotatorPosition() / 2048 / 200 * 360));
+    SmartDashboard.putNumber("Arm Position", getArmDegrees());
     SmartDashboard.putNumber("Arm Length", getArmExtensionPosition());
 
   }
@@ -106,3 +102,4 @@ public class Arm extends SubsystemBase {
   
 
 }
+ 
