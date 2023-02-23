@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
@@ -53,11 +54,11 @@ public class RobotContainer {
   private final Trigger armRotationForward = mainController.y();
   private final Trigger armRotationBackward = mainController.a();
  
-   private final Trigger armSet90 = mainController.povLeft();
+   private final Trigger  armSet90 = mainController.povLeft();
    private final Trigger armSet180 = mainController.povRight();
 
-  private final Trigger clawIn = clawController.b();
-  private final Trigger clawOut = clawController.x();
+  private final Trigger clawIn = mainController.povUp();
+  private final Trigger clawOut = mainController.povDown();
 
  
 
@@ -93,11 +94,15 @@ public class RobotContainer {
     armSet90.onTrue(armSetAngle90);
     armSet180.onTrue(armSetAngle180);
 
-    clawIn.onTrue(new InstantCommand(() -> claw.setClawOneSpeed(.1)));
-    clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
+    clawIn.whileTrue(new StartEndCommand(
+      () -> claw.setClawOneSpeed(0.25), 
+      () -> claw.setClawOneSpeed(0)));
+    // clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
-    clawOut.onTrue(new InstantCommand(() -> claw.setClawOneSpeed(-.1)));
-    clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
+    clawOut.whileTrue(new StartEndCommand(
+      () -> claw.setClawOneSpeed(-0.25), 
+      () -> claw.setClawOneSpeed(0)));
+    // clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
   }
  

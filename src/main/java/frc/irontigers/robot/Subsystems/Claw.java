@@ -35,7 +35,7 @@ public class Claw extends SubsystemBase {
   }
 
   public void setClawOneSpeed(double speed) {
-    claw.set(.5 * speed);
+    claw.set(speed);
   }
 
  
