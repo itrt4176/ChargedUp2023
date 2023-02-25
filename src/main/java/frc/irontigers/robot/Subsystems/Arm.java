@@ -35,10 +35,10 @@ public class Arm extends SubsystemBase {
     armRotator = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR);
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
 
-    armExtensionPosition = new Pose2d();
     
     
-
+    
+    armExtender.setInverted(true);
 
     DataLog log = DataLogManager.getLog();{
       armPositionLog = new DoubleLogEntry(log, "arm/position");
