@@ -52,9 +52,9 @@ public class RobotContainer {
   private final MoveArmToAngle armSetAngle90 = new MoveArmToAngle(arm, 90);
   private final MoveArmToAngle armSetAngle180 = new MoveArmToAngle(arm, 180);
 
-  private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
-  private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 20.75/2.0);
-  private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 20.75);
+  // private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
+  // private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 20.5/2.0);
+  // private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 20.5);
 
   private final Trigger toggleInvertButton = mainController.b();
 
@@ -68,8 +68,8 @@ public class RobotContainer {
   private final Trigger halfExtend = mainController.povUp();
   private final Trigger fullExtend = mainController.povRight();
 
-  // private final Trigger clawIn = mainController.povUp();
-  // private final Trigger clawOut = mainController.povDown();
+  private final Trigger clawIn = mainController.povUp();
+  private final Trigger clawOut = mainController.povDown();
 
  
 
@@ -110,17 +110,17 @@ public class RobotContainer {
     //   () -> claw.setClawOneSpeed(0)));
     // clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
-    // clawIn.onTrue( new InstantCommand(() -> claw.setClawStateTrue()));
-    // clawOut.onTrue(new InstantCommand(() -> claw.setClawStateFalse()));
+    clawIn.onTrue( new InstantCommand(() -> claw.setClawStateTrue()));
+    clawOut.onTrue(new InstantCommand(() -> claw.setClawStateFalse()));
 
     // clawOut.whileTrue(new StartEndCommand(
     //   () -> claw.setClawOneSpeed(-0.75), 
     //   () -> claw.setClawOneSpeed(0)));
     // // clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
-    fullRetract.onTrue(autoFullRetract);
-    halfExtend.onTrue(autoHalfExtend);
-    fullExtend.onTrue(autoFullExtend);
+    // fullRetract.onTrue(autoFullRetract);
+    // halfExtend.onTrue(autoHalfExtend);
+    // fullExtend.onTrue(autoFullExtend);
 
   }
  
