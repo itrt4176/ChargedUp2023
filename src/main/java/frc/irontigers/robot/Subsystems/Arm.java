@@ -49,9 +49,9 @@ public class Arm extends SubsystemBase {
     armExtender.setNeutralMode(NeutralMode.Brake);
   }
 
-  public WPI_TalonFX getArmExtender() {
-    return armExtender;
-  }
+  // public WPI_TalonFX getArmExtender() {
+  //   return armExtender;
+  // }
 
 
   public double getArmDegrees(){
@@ -65,7 +65,12 @@ public class Arm extends SubsystemBase {
   }
 
   public void setExtensionSpeed(double speed) {
-    armExtender.set(speed);
+    if (getArmExtensionPosition() <= 20.9375){
+      armExtender.set(speed);
+    }else{
+      armExtender.set(0);
+    }
+    
   }
 
   public double getRotatorPosition() {
@@ -75,9 +80,7 @@ public class Arm extends SubsystemBase {
  
     return position;
   }
-  public void setRotatorPosition(){
-    
-  }
+
 
 
    public double getArmExtensionPosition() {
