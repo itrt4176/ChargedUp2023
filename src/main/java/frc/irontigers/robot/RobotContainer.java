@@ -4,6 +4,8 @@
 
 package frc.irontigers.robot;
 
+import java.time.Instant;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -12,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
+import frc.irontigers.robot.Commands.AutoArmExtend;
 import frc.irontigers.robot.Commands.MoveArmToAngle;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
 import frc.irontigers.robot.Subsystems.Arm;
@@ -49,16 +52,24 @@ public class RobotContainer {
   private final MoveArmToAngle armSetAngle90 = new MoveArmToAngle(arm, 90);
   private final MoveArmToAngle armSetAngle180 = new MoveArmToAngle(arm, 180);
 
+  private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
+  private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 20.75/2.0);
+  private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 20.75);
+
   private final Trigger toggleInvertButton = mainController.b();
 
   private final Trigger armRotationForward = mainController.y();
   private final Trigger armRotationBackward = mainController.a();
  
-  private final Trigger  armSet90 = mainController.povLeft();
-  private final Trigger armSet180 = mainController.povRight();
+  // private final Trigger  armSet90 = mainController.povLeft();
+  // private final Trigger armSet180 = mainController.povRight();
 
-  private final Trigger clawIn = mainController.povUp();
-  private final Trigger clawOut = mainController.povDown();
+  private final Trigger fullRetract = mainController.povLeft();
+  private final Trigger halfExtend = mainController.povUp();
+  private final Trigger fullExtend = mainController.povRight();
+
+  // private final Trigger clawIn = mainController.povUp();
+  // private final Trigger clawOut = mainController.povDown();
 
  
 
@@ -91,18 +102,25 @@ public class RobotContainer {
     armRotationBackward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
     // armStopRotation.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
 
-    armSet90.onTrue(armSetAngle90);
-    armSet180.onTrue(armSetAngle180);
+    // armSet90.onTrue(armSetAngle90);
+    // armSet180.onTrue(armSetAngle180);
 
-    clawIn.whileTrue(new StartEndCommand(
-      () -> claw.setClawOneSpeed(0.75), 
-      () -> claw.setClawOneSpeed(0)));
+    // clawIn.whileTrue(new StartEndCommand(
+    //   () -> claw.setClawOneSpeed(0.75), 
+    //   () -> claw.setClawOneSpeed(0)));
     // clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
-    clawOut.whileTrue(new StartEndCommand(
-      () -> claw.setClawOneSpeed(-0.75), 
-      () -> claw.setClawOneSpeed(0)));
-    // clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
+    // clawIn.onTrue( new InstantCommand(() -> claw.setClawStateTrue()));
+    // clawOut.onTrue(new InstantCommand(() -> claw.setClawStateFalse()));
+
+    // clawOut.whileTrue(new StartEndCommand(
+    //   () -> claw.setClawOneSpeed(-0.75), 
+    //   () -> claw.setClawOneSpeed(0)));
+    // // clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
+
+    fullRetract.onTrue(autoFullRetract);
+    halfExtend.onTrue(autoHalfExtend);
+    fullExtend.onTrue(autoFullExtend);
 
   }
  
