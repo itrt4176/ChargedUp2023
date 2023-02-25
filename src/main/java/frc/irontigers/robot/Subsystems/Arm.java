@@ -81,7 +81,7 @@ public class Arm extends SubsystemBase {
 
 
    public double getArmExtensionPosition() {
-     double extensionPosition = armExtender.getSelectedSensorPosition();
+    double extensionPosition = armExtender.getSelectedSensorPosition() * Constants.ArmVals.EXTENDER_CONVERSION_FACTOR;
     armExtensionLog.append(extensionPosition);
     
     return extensionPosition;
