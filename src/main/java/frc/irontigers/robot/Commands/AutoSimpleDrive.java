@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.irontigers.robot.Subsystems.DriveSystem;
 
@@ -33,7 +34,9 @@ public class AutoSimpleDrive extends CommandBase {
   @Override
   public void execute() {
     currentPos = driveSystem.getRobotPosition();
-    driveSystem.drive(.35, -.13);
+    SmartDashboard.putNumber("Robot X Pos", Units.metersToFeet(currentPos.getX()));
+    SmartDashboard.putNumber("Robot Y Pos", Units.metersToFeet(currentPos.getY()));
+    driveSystem.drive(-0.7, 0.0);
   }
 
   // Called once the command ends or is interrupted.
