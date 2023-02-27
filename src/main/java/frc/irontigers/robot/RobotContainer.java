@@ -61,12 +61,12 @@ public class RobotContainer {
   private final Trigger armRotationForward = mainController.y();
   private final Trigger armRotationBackward = mainController.a();
  
-  // private final Trigger  armSet90 = mainController.povLeft();
-  // private final Trigger armSet180 = mainController.povRight();
+  private final Trigger  armSet90 = mainController.povLeft();
+  private final Trigger armSet180 = mainController.povRight();
 
-  private final Trigger fullRetract = mainController.povLeft();
-  private final Trigger halfExtend = mainController.povUp();
-  private final Trigger fullExtend = mainController.povRight();
+  // private final Trigger fullRetract = mainController.povLeft();
+  // private final Trigger halfExtend = mainController.povUp();
+  // private final Trigger fullExtend = mainController.povRight();
 
   private final Trigger clawIn = mainController.povUp();
   private final Trigger clawOut = mainController.povDown();
@@ -102,8 +102,8 @@ public class RobotContainer {
     armRotationBackward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
     // armStopRotation.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
 
-    // armSet90.onTrue(armSetAngle90);
-    // armSet180.onTrue(armSetAngle180);
+    armSet90.onTrue(armSetAngle90);
+    armSet180.onTrue(armSetAngle180);
 
     // clawIn.whileTrue(new StartEndCommand(
     //   () -> claw.setClawOneSpeed(0.75), 
