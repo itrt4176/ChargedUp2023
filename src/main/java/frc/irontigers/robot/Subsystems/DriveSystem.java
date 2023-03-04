@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxRelativeEncoder.Type;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.datalog.DataLog;
@@ -24,20 +25,20 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.irontigers.robot.Constants;
+import static frc.irontigers.robot.Constants.DriveSystemVals.*;
 import frc.tigerlib.subsystem.drive.DifferentialDriveSubsystem;
 
 public class DriveSystem extends DifferentialDriveSubsystem {
 
-  private CANSparkMax leftOne = new CANSparkMax(Constants.DriveSystemVals.LEFT_ONE, MotorType.kBrushless);
-  private CANSparkMax leftTwo = new CANSparkMax(Constants.DriveSystemVals.LEFT_TWO, MotorType.kBrushless);
+  private CANSparkMax leftOne = new CANSparkMax(LEFT_ONE, MotorType.kBrushless);
+  private CANSparkMax leftTwo = new CANSparkMax(LEFT_TWO, MotorType.kBrushless);
   private MotorControllerGroup left = new MotorControllerGroup(leftOne, leftTwo);
 
   private RelativeEncoder leftOneEncoder = leftOne.getEncoder();
   private RelativeEncoder leftTwoEncoder = leftTwo.getEncoder();
 
-  private CANSparkMax rightOne = new CANSparkMax(Constants.DriveSystemVals.RIGHT_ONE, MotorType.kBrushless);
-  private CANSparkMax rightTwo = new CANSparkMax(Constants.DriveSystemVals.RIGHT_TWO, MotorType.kBrushless);
+  private CANSparkMax rightOne = new CANSparkMax(RIGHT_ONE, MotorType.kBrushless);
+  private CANSparkMax rightTwo = new CANSparkMax(RIGHT_TWO, MotorType.kBrushless);
   private MotorControllerGroup right = new MotorControllerGroup(rightOne, rightTwo);
 
   private RelativeEncoder rightOneEncoder = rightOne.getEncoder();
@@ -48,6 +49,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   public double gearScalar;
 
 
+  private DataLog log;
   private IntegerLogEntry gearLog;
   private DoubleLogEntry gearScalarLog;
 
@@ -55,23 +57,8 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   private DoubleLogEntry odoRotationLog;
 
   private AHRS gyro = new AHRS();
-  
 
-
-  DataLog log = DataLogManager.getLog();{
-  gearLog = new IntegerLogEntry(log,"drive/gear");
-  gearScalarLog = new DoubleLogEntry(log,"drive/gearScalar");
-
-  odoxLog = new DoubleLogEntry(log,"drive/odometer/x");
-  odoRotationLog = new DoubleLogEntry(log,"drive/odometer/rotation");
-}
-
-// public DifferentialDriveOdometry geOdometer(){
-//   return odometer;
-// }
-
-
-
+  private DifferentialDriveKinematics kinematics;
 
   /** Creates a new DriveSystem. */
   public DriveSystem() {
@@ -83,32 +70,41 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     setGyro(gyro);
     setMotors(left, right);
 
-    leftOneEncoder.setPositionConversionFactor(Constants.DriveSystemVals.PULSES_TO_DISTANCE_METER);
-    leftTwoEncoder.setPositionConversionFactor(Constants.DriveSystemVals.PULSES_TO_DISTANCE_METER);
-    rightOneEncoder.setPositionConversionFactor(-Constants.DriveSystemVals.PULSES_TO_DISTANCE_METER);
-    rightTwoEncoder.setPositionConversionFactor(-Constants.DriveSystemVals.PULSES_TO_DISTANCE_METER);
+    leftOneEncoder.setPositionConversionFactor(PULSES_TO_DISTANCE_METER);
+    leftTwoEncoder.setPositionConversionFactor(PULSES_TO_DISTANCE_METER);
+    rightOneEncoder.setPositionConversionFactor(-PULSES_TO_DISTANCE_METER);
+    rightTwoEncoder.setPositionConversionFactor(-PULSES_TO_DISTANCE_METER);
     resetEncoders();
+
+    kinematics = new DifferentialDriveKinematics(TRACK_WIDTH);
+
+    log = DataLogManager.getLog();
+    gearLog = new IntegerLogEntry(log, "drive/gear");
+    gearScalarLog = new DoubleLogEntry(log, "drive/gearScalar");
+
+    odoxLog = new DoubleLogEntry(log, "drive/odometer/x");
+    odoRotationLog = new DoubleLogEntry(log, "drive/odometer/rotation");
   }
 
-    public void drive(double xSpeed, double rotation){
-      switch(gear){
-        case 0:
+  public void drive(double xSpeed, double rotation) {
+    switch (gear) {
+      case 0:
         gearScalar = .35;
         break;
-        case 1:
+      case 1:
         gearScalar = .5;
         break;
-        case 2:
+      case 2:
         gearScalar = .65;
         break;
-        case 3:
+      case 3:
         gearScalar = .8;
         break;
-      }
-    super.drive(gearScalar * xSpeed, gearScalar * rotation);
-
-    gearScalarLog.append(gearScalar);
     }
+
+    super.drive(gearScalar * xSpeed, gearScalar * rotation);
+    gearScalarLog.append(gearScalar);
+  }
 
   public void shiftUp(){
     if(gear < 3){
@@ -131,7 +127,19 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     rightTwo.setIdleMode(idleMode);
   
   }
-  
+
+  /**
+   * @return the kinematics
+   */
+  public DifferentialDriveKinematics getKinematics() {
+    return kinematics;
+  }
+
+  public void voltageDrive(double leftVolts, double rightVolts) {
+    left.setVoltage(leftVolts);
+    right.setVoltage(rightVolts);
+    drive.feed();
+  }
 
   @Override
   public void periodic() {
