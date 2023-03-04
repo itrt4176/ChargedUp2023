@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.irontigers.robot.Subsystems.DriveSystem;
 
-public class AutoSimpleDrive extends CommandBase {
+public class AutoSimpleReverse extends CommandBase {
   DriveSystem driveSystem;
     Pose2d currentPos;
     Pose2d destination;
   /** Creates a new AutoSimpleDrive. */
-  public AutoSimpleDrive(DriveSystem driveSystem) {
+  public AutoSimpleReverse(DriveSystem driveSystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveSystem = driveSystem;
     addRequirements(this.driveSystem);
@@ -27,7 +27,7 @@ public class AutoSimpleDrive extends CommandBase {
   @Override
   public void initialize() {
     currentPos = driveSystem.getRobotPosition();
-    destination = currentPos.plus(new Transform2d(currentPos, new Pose2d(Units.feetToMeters(135), 0, new Rotation2d())));
+    destination = currentPos.plus(new Transform2d(currentPos, new Pose2d(Units.feetToMeters(60), 0, new Rotation2d())));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -36,7 +36,7 @@ public class AutoSimpleDrive extends CommandBase {
     currentPos = driveSystem.getRobotPosition();
     SmartDashboard.putNumber("Robot X Pos", Units.metersToFeet(currentPos.getX()));
     SmartDashboard.putNumber("Robot Y Pos", Units.metersToFeet(currentPos.getY()));
-    driveSystem.drive(-0.7, -0.09);
+    driveSystem.drive(0.7, -0.09);
   }
 
   // Called once the command ends or is interrupted.
@@ -48,7 +48,7 @@ public class AutoSimpleDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(currentPos.getX()) >= Math.abs(destination.getX());
+    return Math.abs(currentPos.getX()) <= Math.abs(destination.getX());
     
 
   }

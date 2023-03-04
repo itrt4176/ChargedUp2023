@@ -69,12 +69,12 @@ public class Arm extends SubsystemBase {
   }
 
   public void setExtensionSpeed(double speed) {
-    if (getArmExtensionPosition() <= 20.9375){
-      armExtender.set(speed);
-    }else{
-      armExtender.set(0);
-    }
-    
+    // if (getArmExtensionPosition() <= 20.9375){
+    //   armExtender.set(speed);
+    // }else{
+    //   armExtender.set(0);
+    // }
+     armExtender.set(speed);
   }
 
   public double getRotatorPosition() {
