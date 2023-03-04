@@ -5,6 +5,7 @@
 package frc.irontigers.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -21,7 +22,7 @@ public final class Constants {
     public final static int LEFT_TWO = 12;
     public final static int RIGHT_ONE = 13;
     public final static int RIGHT_TWO = 14;
-    public final static double PULSES_TO_DISTANCE_FEET = 1 / 42 * 5.95 * ((3.31 + (2 * 0.275591)) * Math.PI / 12);
+    public final static double PULSES_TO_DISTANCE_METER = 1.0 / ((42.0 * 5.95) / Units.inchesToMeters(2.901 * Math.PI));
     }
  
     public static final class ArmVals{
@@ -31,6 +32,7 @@ public final class Constants {
         public final static double PULSES_TO_DEGREES = 1 / 2048.0 / 200 * 360;
         public final static int ARM_EXTENDER_UPPER_LIMIT = -137795; //negative velocity extends motor; upper limit has to be lower than lower limit
         public final static int ARM_EXTENDER_LOWER_LIMIT = -12000;
+        public final static double EXTENDER_CONVERSION_FACTOR = 20.9375 / 132067.0;
         // Six feet high -> -57509
         // public final static double ROTATOR_CONVERSION_FACTOR = 
     }

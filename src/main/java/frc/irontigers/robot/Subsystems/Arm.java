@@ -35,10 +35,10 @@ public class Arm extends SubsystemBase {
     armRotator = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR);
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
 
-    armExtensionPosition = new Pose2d();
     
     
-
+    
+    armExtender.setInverted(true);
 
     DataLog log = DataLogManager.getLog();{
       armPositionLog = new DoubleLogEntry(log, "arm/position");
@@ -49,9 +49,9 @@ public class Arm extends SubsystemBase {
     armExtender.setNeutralMode(NeutralMode.Brake);
   }
 
-  public WPI_TalonFX getArmExtender() {
-    return armExtender;
-  }
+  // public WPI_TalonFX getArmExtender() {
+  //   return armExtender;
+  // }
 
 
   public double getArmDegrees(){
@@ -65,7 +65,12 @@ public class Arm extends SubsystemBase {
   }
 
   public void setExtensionSpeed(double speed) {
-    armExtender.set(speed);
+    if (getArmExtensionPosition() <= 20.9375){
+      armExtender.set(speed);
+    }else{
+      armExtender.set(0);
+    }
+    
   }
 
   public double getRotatorPosition() {
@@ -75,13 +80,11 @@ public class Arm extends SubsystemBase {
  
     return position;
   }
-  public void setRotatorPosition(){
-    
-  }
+
 
 
    public double getArmExtensionPosition() {
-     double extensionPosition = armExtender.getSelectedSensorPosition();
+    double extensionPosition = armExtender.getSelectedSensorPosition() * Constants.ArmVals.EXTENDER_CONVERSION_FACTOR;
     armExtensionLog.append(extensionPosition);
     
     return extensionPosition;

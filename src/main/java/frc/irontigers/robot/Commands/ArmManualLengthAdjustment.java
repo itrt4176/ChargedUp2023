@@ -34,21 +34,23 @@ public class ArmManualLengthAdjustment extends CommandBase {
   @Override
   public void execute() {
 
-    if ((manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()) < 0) { //if extending
-      if (arm.getArmExtender().getSelectedSensorPosition() > Constants.ArmVals.ARM_EXTENDER_UPPER_LIMIT) {
-        arm.setExtensionSpeed(0.35*(manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()));
-      } else {
-        arm.setExtensionSpeed(0);
-      }
-    } else if ((manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()) > 0) { //if retracting
-      if (arm.getArmExtender().getSelectedSensorPosition() < Constants.ArmVals.ARM_EXTENDER_LOWER_LIMIT) {
-        arm.setExtensionSpeed(0.35*(manualController.getLeftTriggerAxis() - manualController.getRightTriggerAxis()));
-      } else {
-        arm.setExtensionSpeed(0);
-      }
-    } else {
-      arm.setExtensionSpeed(0);
-    }
+    // //if extending
+    //   if (arm.getArmExtender().getSelectedSensorPosition() > Constants.ArmVals.ARM_EXTENDER_UPPER_LIMIT) {
+    //     arm.setExtensionSpeed(0.35*(manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis()));
+    //   } else {
+    //     arm.setExtensionSpeed(0);
+    //   }
+    // //if retracting
+    //   if (arm.getArmExtender().getSelectedSensorPosition() < Constants.ArmVals.ARM_EXTENDER_LOWER_LIMIT) {
+    //     arm.setExtensionSpeed(0.35*(manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis()));
+    //   } else {
+    //     arm.setExtensionSpeed(0);
+    //   }
+    // } else {
+    //   arm.setExtensionSpeed(0);
+    // }
+
+    arm.setExtensionSpeed( .35 * (manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis()));
   }
 
   // Called once the command ends or is interrupted.

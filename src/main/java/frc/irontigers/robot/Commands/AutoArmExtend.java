@@ -41,9 +41,9 @@ public class AutoArmExtend extends CommandBase {
   @Override
   public void execute() {
     difference = destination - arm.getArmExtensionPosition();
-    double speed = MathUtil.clamp(difference * (.35/30), -.35, .35);
+    double speed = MathUtil.clamp(difference * (0.85 / 3.0), -0.85, 0.85);
 
-    if (Math.abs(speed) < .1){
+    if (Math.abs(speed) < 0.07) {
       return;
     }
 
@@ -59,7 +59,7 @@ public class AutoArmExtend extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   return Math.abs(difference) <= 100.0;
+   return Math.abs(difference) <= 0.1;
   }
 }
 
