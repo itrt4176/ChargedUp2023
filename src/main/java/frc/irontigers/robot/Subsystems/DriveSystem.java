@@ -14,6 +14,7 @@ import com.revrobotics.SparkMaxRelativeEncoder.Type;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.datalog.IntegerLogEntry;
@@ -65,9 +66,9 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   odoRotationLog = new DoubleLogEntry(log,"drive/odometer/rotation");
 }
 
-public DifferentialDriveOdometry geOdometer(){
-  return odometer;
-}
+// public DifferentialDriveOdometry geOdometer(){
+//   return odometer;
+// }
 
 
 
@@ -82,10 +83,11 @@ public DifferentialDriveOdometry geOdometer(){
     setGyro(gyro);
     setMotors(left, right);
 
-    leftOneEncoder.setPositionConversionFactor(Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET);
-    leftTwoEncoder.setPositionConversionFactor(Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET);
-    rightOneEncoder.setPositionConversionFactor(-1 * Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET);
-    rightTwoEncoder.setPositionConversionFactor(-1 * Constants.DriveSystemVals.PULSES_TO_DISTANCE_FEET);
+    leftOneEncoder.setPositionConversionFactor(Constants.DriveSystemVals.PULSES_TO_DISTANCE_METER);
+    leftTwoEncoder.setPositionConversionFactor(Constants.DriveSystemVals.PULSES_TO_DISTANCE_METER);
+    rightOneEncoder.setPositionConversionFactor(-Constants.DriveSystemVals.PULSES_TO_DISTANCE_METER);
+    rightTwoEncoder.setPositionConversionFactor(-Constants.DriveSystemVals.PULSES_TO_DISTANCE_METER);
+    resetEncoders();
   }
 
     public void drive(double xSpeed, double rotation){
@@ -109,7 +111,7 @@ public DifferentialDriveOdometry geOdometer(){
     }
 
   public void shiftUp(){
-    if(gear < 3){
+    if(gear < 3){ 
       gear++;
     }
     gearLog.append(gear);
