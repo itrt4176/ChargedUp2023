@@ -111,7 +111,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     }
 
   public void shiftUp(){
-    if(gear < 3){
+    if(gear < 3){ 
       gear++;
     }
     gearLog.append(gear);
