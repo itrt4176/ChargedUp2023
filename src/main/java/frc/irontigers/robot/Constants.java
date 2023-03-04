@@ -23,6 +23,13 @@ public final class Constants {
     public final static int RIGHT_ONE = 13;
     public final static int RIGHT_TWO = 14;
     public final static double PULSES_TO_DISTANCE_METER = 1.0 / ((42.0 * 5.95) / Units.inchesToMeters(2.901 * Math.PI));
+
+    // sysid analysis output
+    public final static double S = 0.44634;
+    public final static double V = 3.4079;
+    public final static double A = 0.32827;
+    public final static double P = 1.2082;
+    public final static double D = 0.0;
     }
  
     public static final class ArmVals{
