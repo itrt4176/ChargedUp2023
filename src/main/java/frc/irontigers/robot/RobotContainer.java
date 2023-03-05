@@ -135,14 +135,14 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     SequentialCommandGroup drive = new SequentialCommandGroup(
-      // new MoveArmToAngle(arm, 205),
-      // new InstantCommand(() -> claw.setClawStateTrue()),
-      // new WaitCommand(1),
-      // new MoveArmToAngle(arm, 10),
-      // new InstantCommand(() -> claw.setClawStateFalse()),
-      new AutoSimpleDrive(driveSystem));
-      // new WaitUntilCommand(1),
-      // new AutoSimpleReverse(driveSystem));
+      new MoveArmToAngle(arm, 205),
+      new InstantCommand(() -> claw.setClawStateTrue()),
+      new WaitCommand(1),
+      new MoveArmToAngle(arm, 10),
+      new InstantCommand(() -> claw.setClawStateFalse()),
+      new AutoSimpleDrive(driveSystem),
+      new WaitUntilCommand(1),
+      new AutoSimpleReverse(driveSystem));
     return drive;
 
   }

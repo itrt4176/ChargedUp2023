@@ -27,7 +27,7 @@ public class AutoSimpleReverse extends CommandBase {
   @Override
   public void initialize() {
     currentPos = driveSystem.getRobotPosition();
-    destination = currentPos.plus(new Transform2d(currentPos, new Pose2d(Units.feetToMeters(60), 0, new Rotation2d())));
+    destination = currentPos.plus(new Transform2d(currentPos, new Pose2d(Units.feetToMeters(80), 0, new Rotation2d())));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
