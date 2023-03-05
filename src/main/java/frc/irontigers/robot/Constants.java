@@ -29,6 +29,7 @@ public final class Constants {
     public final static double V = 3.4079;
     public final static double A = 0.32827;
     public final static double P = 1.2431; //Measurment delay = 41.272, Max control effort = 5.5 V
+    public final static double I = 0.0;
     public final static double D = 0.0;
     public final static double TRACK_WIDTH = 2.41;
     }

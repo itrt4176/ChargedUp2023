@@ -6,6 +6,9 @@ package frc.irontigers.robot;
 
 import java.time.Instant;
 
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -16,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
 import frc.irontigers.robot.Commands.AutoArmExtend;
 import frc.irontigers.robot.Commands.MoveArmToAngle;
+import frc.irontigers.robot.Commands.PathFollowingDemo;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
 import frc.irontigers.robot.Subsystems.Arm;
 import frc.irontigers.robot.Subsystems.Claw;
@@ -132,10 +136,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    SequentialCommandGroup drive = new SequentialCommandGroup(
-      new AutoSimpleDrive(driveSystem),
-      new WaitUntilCommand(14.5));
-      
-    return drive;
+    PathPlannerTrajectory simple = PathPlanner.loadPath("SimpleAuto", 0.5, 0.1);
+
+    return new PathFollowingDemo(simple, driveSystem);
   }
 }

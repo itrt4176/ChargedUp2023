@@ -10,6 +10,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.pathplanner.lib.server.PathPlannerServer;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -59,6 +60,8 @@ public class Robot extends TimedRobot {
     }
 
     DataLogManager.log(version.toString());
+
+    PathPlannerServer.startServer(4176);
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.

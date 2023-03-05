@@ -15,6 +15,7 @@ import com.revrobotics.SparkMaxRelativeEncoder.Type;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -71,9 +72,10 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     setMotors(left, right);
 
     leftOneEncoder.setPositionConversionFactor(PULSES_TO_DISTANCE_METER);
-    leftTwoEncoder.setPositionConversionFactor(PULSES_TO_DISTANCE_METER);
     rightOneEncoder.setPositionConversionFactor(-PULSES_TO_DISTANCE_METER);
-    rightTwoEncoder.setPositionConversionFactor(-PULSES_TO_DISTANCE_METER);
+    
+    leftOneEncoder.setVelocityConversionFactor(PULSES_TO_DISTANCE_METER / 60.0);
+    rightOneEncoder.setVelocityConversionFactor(-PULSES_TO_DISTANCE_METER / 60.0);
     resetEncoders();
 
     kinematics = new DifferentialDriveKinematics(TRACK_WIDTH);
@@ -133,6 +135,10 @@ public class DriveSystem extends DifferentialDriveSubsystem {
    */
   public DifferentialDriveKinematics getKinematics() {
     return kinematics;
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(leftOneEncoder.getVelocity(), rightOneEncoder.getVelocity());
   }
 
   public void voltageDrive(double leftVolts, double rightVolts) {
