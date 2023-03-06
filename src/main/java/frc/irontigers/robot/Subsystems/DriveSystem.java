@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.irontigers.robot.Constants.DriveSystemVals.*;
+import static frc.irontigers.robot.Constants.DriveVals.*;
 import frc.tigerlib.subsystem.drive.DifferentialDriveSubsystem;
 
 public class DriveSystem extends DifferentialDriveSubsystem {

@@ -17,7 +17,7 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
 
-    public static final class DriveSystemVals{
+    public static final class DriveVals {
     public final static int LEFT_ONE = 11;
     public final static int LEFT_TWO = 12;
     public final static int RIGHT_ONE = 13;

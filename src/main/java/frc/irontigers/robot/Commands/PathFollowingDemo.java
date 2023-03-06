@@ -13,7 +13,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.irontigers.robot.Subsystems.DriveSystem;
-import static frc.irontigers.robot.Constants.DriveSystemVals.*;
+import static frc.irontigers.robot.Constants.DriveVals.*;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
