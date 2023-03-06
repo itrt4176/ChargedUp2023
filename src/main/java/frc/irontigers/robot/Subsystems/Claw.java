@@ -41,11 +41,11 @@ public class Claw extends SubsystemBase {
   //   claw.set(speed);
   // }
 
-  public void setClawStateTrue(){
+  public void open() {
     clawPnuematic.set(true);
   }
 
-  public void setClawStateFalse(){
+  public void close() {
     clawPnuematic.set(false);
   }
   
