@@ -10,6 +10,8 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -75,6 +77,8 @@ public class RobotContainer {
   private final Trigger clawIn = mainController.povUp();
   private final Trigger clawOut = mainController.povDown();
 
+  private final SendableChooser<String> autoPath = new SendableChooser<>();
+
  
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -126,6 +130,10 @@ public class RobotContainer {
     // halfExtend.onTrue(autoHalfExtend);
     // fullExtend.onTrue(autoFullExtend);
 
+    autoPath.addOption("Simple Auto", "SimpleAuto");
+    autoPath.addOption("Super Auto", "SuperAuto");
+    autoPath.addOption("S-shape Demo", "Figure8");
+    SmartDashboard.putData("Auto Path", autoPath);
   }
  
  
@@ -136,7 +144,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory simple = PathPlanner.loadPath("SimpleAuto", 0.5, 0.1);
+    String path = autoPath.getSelected();
+
+    PathPlannerTrajectory simple = PathPlanner.loadPath(path, 2.0, 1.0);
 
     return new PathFollowingDemo(simple, driveSystem);
   }
