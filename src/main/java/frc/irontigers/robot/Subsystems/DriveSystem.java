@@ -73,10 +73,24 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     rightOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
+
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
     leftOne.burnFlash();
     rightOne.burnFlash();
     leftTwo.burnFlash();
     rightTwo.burnFlash();
+
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
     setGyro(gyro);
     setMotors(left, right);
 
