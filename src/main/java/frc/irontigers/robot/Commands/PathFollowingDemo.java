@@ -32,8 +32,8 @@ public class PathFollowingDemo extends SequentialCommandGroup {
           new SimpleMotorFeedforward(S, V, A), 
           driveSys.getKinematics(), 
           driveSys::getWheelSpeeds,
-          new PIDController(P, I, D),
-          new PIDController(P, I, D),
+          new PIDController(LEFT_P, LEFT_I, LEFT_D),
+          new PIDController(RIGHT_P, RIGHT_I, RIGHT_D),
           driveSys::voltageDrive,
           false,
           driveSys
