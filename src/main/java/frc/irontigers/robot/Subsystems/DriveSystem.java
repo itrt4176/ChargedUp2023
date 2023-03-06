@@ -71,6 +71,10 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     rightOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
+    leftOne.setSmartCurrentLimit(50);
+    leftTwo.setSmartCurrentLimit(50);
+    rightOne.setSmartCurrentLimit(50);
+    rightTwo.setSmartCurrentLimit(50);
 
     try {
       Thread.sleep(500);
