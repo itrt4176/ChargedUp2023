@@ -22,7 +22,7 @@ public final class Constants {
     public final static int LEFT_TWO = 12;
     public final static int RIGHT_ONE = 13;
     public final static int RIGHT_TWO = 14;
-    public final static double PULSES_TO_DISTANCE_METER = 1.0 / ((42.0 * 5.95) / Units.inchesToMeters(2.901 * Math.PI));
+    public final static double ROTATIONS_TO_METERS = (Units.inchesToMeters(2.901) * Math.PI) / 5.95;
 
     // sysid analysis output
     public final static double S = 0.44634;
