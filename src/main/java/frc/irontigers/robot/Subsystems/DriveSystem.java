@@ -63,11 +63,20 @@ public class DriveSystem extends DifferentialDriveSubsystem {
 
   /** Creates a new DriveSystem. */
   public DriveSystem() {
+    leftOne.restoreFactoryDefaults();
+    leftTwo.restoreFactoryDefaults();
+    rightOne.restoreFactoryDefaults();
+    rightTwo.restoreFactoryDefaults();
+
     leftOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
     leftTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
+    leftOne.burnFlash();
+    rightOne.burnFlash();
+    leftTwo.burnFlash();
+    rightTwo.burnFlash();
     setGyro(gyro);
     setMotors(left, right);
 
