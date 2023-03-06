@@ -43,7 +43,7 @@ public class AutoArmExtend extends CommandBase {
     difference = destination - arm.getArmExtensionPosition();
     double speed = MathUtil.clamp(difference * (0.85 / 3.0), -0.85, 0.85);
 
-    if (Math.abs(speed) < 0.07) {
+    if (Math.abs(speed) < 0.07) { 
       return;
     }
 
