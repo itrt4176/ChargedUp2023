@@ -5,15 +5,29 @@
 package frc.irontigers.robot;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.RamseteAutoBuilder;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
@@ -21,12 +35,14 @@ import frc.irontigers.robot.Commands.AutoArmExtend;
 import frc.irontigers.robot.Commands.MoveArmToAngle;
 import frc.irontigers.robot.Commands.PathFollowingDemo;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
+import frc.irontigers.robot.Commands.AutoSimpleReverse;
 import frc.irontigers.robot.Subsystems.Arm;
 import frc.irontigers.robot.Subsystems.Claw;
 import frc.irontigers.robot.Subsystems.DriveSystem;
 import frc.tigerlib.XboxControllerIT;
 import frc.tigerlib.command.DifferentialJoystickDrive;
 import frc.tigerlib.command.ToggleInversionCommand;
+import static frc.irontigers.robot.Constants.*;
 
 
 
@@ -53,20 +69,20 @@ public class RobotContainer {
   private final Trigger gearShiftDown = mainController.leftBumper();
 
   private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(arm, mainController);
-  private final MoveArmToAngle armSetAngle90 = new MoveArmToAngle(arm, 90);
-  private final MoveArmToAngle armSetAngle180 = new MoveArmToAngle(arm, 180);
+  private final MoveArmToAngle armSetAngle190 = new MoveArmToAngle(arm, 190);
+  private final MoveArmToAngle armSetAngle205 = new MoveArmToAngle(arm, 205);
 
   // private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
-  // private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 20.5/2.0);
-  // private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 20.5);
+  // private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 23/2.0);
+  // private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 23);
 
   private final Trigger toggleInvertButton = mainController.b();
 
   private final Trigger armRotationForward = mainController.y();
   private final Trigger armRotationBackward = mainController.a();
  
-  private final Trigger  armSet90 = mainController.povLeft();
-  private final Trigger armSet180 = mainController.povRight();
+  private final Trigger  armSet190 = mainController.povLeft();
+  private final Trigger armSet205 = mainController.povRight();
 
   // private final Trigger fullRetract = mainController.povLeft();
   // private final Trigger halfExtend = mainController.povUp();
@@ -74,6 +90,8 @@ public class RobotContainer {
 
   private final Trigger clawIn = mainController.povUp();
   private final Trigger clawOut = mainController.povDown();
+
+  private final SendableChooser<String> autoPath = new SendableChooser<>();
 
  
 
@@ -106,16 +124,16 @@ public class RobotContainer {
     armRotationBackward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
     // armStopRotation.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
 
-    armSet90.onTrue(armSetAngle90);
-    armSet180.onTrue(armSetAngle180);
+    armSet190.onTrue(armSetAngle190);
+    armSet205.onTrue(armSetAngle205);
 
     // clawIn.whileTrue(new StartEndCommand(
     //   () -> claw.setClawOneSpeed(0.75), 
     //   () -> claw.setClawOneSpeed(0)));
     // clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
-    clawIn.onTrue( new InstantCommand(() -> claw.setClawStateTrue()));
-    clawOut.onTrue(new InstantCommand(() -> claw.setClawStateFalse()));
+    clawIn.onTrue(new InstantCommand(() -> claw.open()));
+    clawOut.onTrue(new InstantCommand(() -> claw.close()));
 
     // clawOut.whileTrue(new StartEndCommand(
     //   () -> claw.setClawOneSpeed(-0.75), 
@@ -126,6 +144,10 @@ public class RobotContainer {
     // halfExtend.onTrue(autoHalfExtend);
     // fullExtend.onTrue(autoFullExtend);
 
+    autoPath.addOption("Simple Auto", "SimpleAuto");
+    autoPath.addOption("Super Auto", "SuperAuto");
+    autoPath.addOption("S-shape Demo", "Figure8");
+    SmartDashboard.putData("Auto Path", autoPath);
   }
  
  
@@ -136,8 +158,42 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory simple = PathPlanner.loadPath("SimpleAuto", 0.5, 0.1);
+    Map<String, Command> eventMap = new HashMap<>();
+    eventMap.put(
+      "retract",
+      new ParallelCommandGroup(
+        new AutoArmExtend(arm, 0),
+        new MoveArmToAngle(arm, 10)
+      )
+    );
+    eventMap.put(
+      "balance", 
+      new PrintCommand("Make me balance!")
+    );
 
-    return new PathFollowingDemo(simple, driveSystem);
+    String path = autoPath.getSelected();
+
+    List<PathPlannerTrajectory> trajectory = PathPlanner.loadPathGroup(path, 1.75, 1.25);
+
+    RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
+      driveSystem::getRobotPosition, 
+      driveSystem::setRobotPosition, 
+      new RamseteController(), 
+      driveSystem.getKinematics(), 
+      new SimpleMotorFeedforward(DriveVals.S, DriveVals.V, DriveVals.A), 
+      driveSystem::getWheelSpeeds, 
+      new PIDConstants(DriveVals.RIGHT_P, DriveVals.RIGHT_I, DriveVals.RIGHT_D), 
+      driveSystem::voltageDrive,
+      eventMap, 
+      true, 
+      driveSystem
+    );
+
+    return new SequentialCommandGroup(
+      new MoveArmToAngle(arm, 190),
+      new InstantCommand(claw::open),
+      autoBuilder.fullAuto(trajectory)
+    );
+
   }
 }

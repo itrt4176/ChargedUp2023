@@ -13,7 +13,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.irontigers.robot.Subsystems.DriveSystem;
-import static frc.irontigers.robot.Constants.DriveSystemVals.*;
+import static frc.irontigers.robot.Constants.DriveVals.*;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -32,8 +32,8 @@ public class PathFollowingDemo extends SequentialCommandGroup {
           new SimpleMotorFeedforward(S, V, A), 
           driveSys.getKinematics(), 
           driveSys::getWheelSpeeds,
-          new PIDController(P, I, D),
-          new PIDController(P, I, D),
+          new PIDController(LEFT_P, LEFT_I, LEFT_D),
+          new PIDController(RIGHT_P, RIGHT_I, RIGHT_D),
           driveSys::voltageDrive,
           false,
           driveSys

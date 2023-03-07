@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.irontigers.robot.Constants.DriveSystemVals.*;
+import static frc.irontigers.robot.Constants.DriveVals.*;
 import frc.tigerlib.subsystem.drive.DifferentialDriveSubsystem;
 
 public class DriveSystem extends DifferentialDriveSubsystem {
@@ -36,14 +36,12 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   private MotorControllerGroup left = new MotorControllerGroup(leftOne, leftTwo);
 
   private RelativeEncoder leftOneEncoder = leftOne.getEncoder();
-  private RelativeEncoder leftTwoEncoder = leftTwo.getEncoder();
 
   private CANSparkMax rightOne = new CANSparkMax(RIGHT_ONE, MotorType.kBrushless);
   private CANSparkMax rightTwo = new CANSparkMax(RIGHT_TWO, MotorType.kBrushless);
   private MotorControllerGroup right = new MotorControllerGroup(rightOne, rightTwo);
 
   private RelativeEncoder rightOneEncoder = rightOne.getEncoder();
-  private RelativeEncoder rightTwoEncoder = rightTwo.getEncoder();
 
   public int direction = 1;
   public int gear = 2;
@@ -63,19 +61,41 @@ public class DriveSystem extends DifferentialDriveSubsystem {
 
   /** Creates a new DriveSystem. */
   public DriveSystem() {
+    leftOne.restoreFactoryDefaults();
+    leftTwo.restoreFactoryDefaults();
+    rightOne.restoreFactoryDefaults();
+    rightTwo.restoreFactoryDefaults();
+
     leftOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
     leftTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
+    leftOne.setSmartCurrentLimit(50);
+    leftTwo.setSmartCurrentLimit(50);
+    rightOne.setSmartCurrentLimit(50);
+    rightTwo.setSmartCurrentLimit(50);
+
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    leftOne.burnFlash();
+    rightOne.burnFlash();
+    leftTwo.burnFlash();
+    rightTwo.burnFlash();
+
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
     setGyro(gyro);
     setMotors(left, right);
 
-    leftOneEncoder.setPositionConversionFactor(PULSES_TO_DISTANCE_METER);
-    rightOneEncoder.setPositionConversionFactor(-PULSES_TO_DISTANCE_METER);
-    
-    leftOneEncoder.setVelocityConversionFactor(PULSES_TO_DISTANCE_METER / 60.0);
-    rightOneEncoder.setVelocityConversionFactor(-PULSES_TO_DISTANCE_METER / 60.0);
     resetEncoders();
 
     kinematics = new DifferentialDriveKinematics(TRACK_WIDTH);
@@ -109,7 +129,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   }
 
   public void shiftUp(){
-    if(gear < 3){
+    if(gear < 3){ 
       gear++;
     }
     gearLog.append(gear);
@@ -138,7 +158,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(leftOneEncoder.getVelocity(), rightOneEncoder.getVelocity());
+    return new DifferentialDriveWheelSpeeds(leftOneEncoder.getVelocity() * ROTATIONS_TO_METERS / 60.0, -rightOneEncoder.getVelocity() * ROTATIONS_TO_METERS / 60.0);
   }
 
   public void voltageDrive(double leftVolts, double rightVolts) {
@@ -157,29 +177,28 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     odoRotationLog.append(pos.getRotation().getDegrees());
 
     SmartDashboard.putNumber("Robot X", getRobotPosition().getX());
-    SmartDashboard.putNumber("Left", leftOneEncoder.getPosition());
-    SmartDashboard.putNumber("Right", rightOneEncoder.getPosition());
+    SmartDashboard.putNumber("Left", getLeftDistance());
+    SmartDashboard.putNumber("Right", getRightDistance());
+
+    DifferentialDriveWheelSpeeds velocity = getWheelSpeeds();
+    SmartDashboard.putNumber("Left Velocity (mps)", velocity.leftMetersPerSecond);
+    SmartDashboard.putNumber("Right Velocity (mps)", velocity.rightMetersPerSecond);
   }
 
   @Override
   protected double getLeftDistance() {
-    // TODO Auto-generated method stub
-    return leftOneEncoder.getPosition();
+    return leftOneEncoder.getPosition() * ROTATIONS_TO_METERS;
   }
 
   @Override
   protected double getRightDistance() {
-    // TODO Auto-generated method stub
-    return rightOneEncoder.getPosition();
+    return -rightOneEncoder.getPosition() * ROTATIONS_TO_METERS;
   
   }
 
   @Override
   protected void resetEncoders() {
-    // TODO Auto-generated method stub
     leftOneEncoder.setPosition(0);
-    leftTwoEncoder.setPosition(0);
     rightOneEncoder.setPosition(0);
-    rightTwoEncoder.setPosition(0);
   }
 }
