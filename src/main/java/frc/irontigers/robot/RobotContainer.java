@@ -161,7 +161,7 @@ public class RobotContainer {
     Map<String, Command> eventMap = new HashMap<>();
     eventMap.put(
       "retract",
-      new SequentialCommandGroup(
+      new ParallelCommandGroup(
         new AutoArmExtend(arm, 0),
         new MoveArmToAngle(arm, 10)
       )
