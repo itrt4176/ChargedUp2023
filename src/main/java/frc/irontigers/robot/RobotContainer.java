@@ -5,26 +5,15 @@
 package frc.irontigers.robot;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.RamseteAutoBuilder;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -42,7 +31,6 @@ import frc.irontigers.robot.Subsystems.DriveSystem;
 import frc.tigerlib.XboxControllerIT;
 import frc.tigerlib.command.DifferentialJoystickDrive;
 import frc.tigerlib.command.ToggleInversionCommand;
-import static frc.irontigers.robot.Constants.*;
 
 
 
@@ -158,42 +146,21 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    Map<String, Command> eventMap = new HashMap<>();
-    eventMap.put(
-      "retract",
-      new ParallelCommandGroup(
-        new AutoArmExtend(arm, 0),
-        new MoveArmToAngle(arm, 10)
-      )
-    );
-    eventMap.put(
-      "balance", 
-      new PrintCommand("Make me balance!")
-    );
-
     String path = autoPath.getSelected();
 
-    List<PathPlannerTrajectory> trajectory = PathPlanner.loadPathGroup(path, 1.75, 1.25);
+    PathPlannerTrajectory simple = PathPlanner.loadPath(path, 2.0, 1.0);
 
-    RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
-      driveSystem::getRobotPosition, 
-      driveSystem::setRobotPosition, 
-      new RamseteController(), 
-      driveSystem.getKinematics(), 
-      new SimpleMotorFeedforward(DriveVals.S, DriveVals.V, DriveVals.A), 
-      driveSystem::getWheelSpeeds, 
-      new PIDConstants(DriveVals.RIGHT_P, DriveVals.RIGHT_I, DriveVals.RIGHT_D), 
-      driveSystem::voltageDrive,
-      eventMap, 
-      true, 
-      driveSystem
-    );
-
-    return new SequentialCommandGroup(
-      new MoveArmToAngle(arm, 190),
-      new InstantCommand(claw::open),
-      autoBuilder.fullAuto(trajectory)
-    );
+    return new PathFollowingDemo(simple, driveSystem);
+    // SequentialCommandGroup drive = new SequentialCommandGroup(
+    // new MoveArmToAngle(arm, 205),
+    // new InstantCommand(() -> claw.setClawStateTrue()),
+    // new WaitCommand(1),
+    // new MoveArmToAngle(arm, 10),
+    // new InstantCommand(() -> claw.setClawStateFalse()),
+    // new AutoSimpleDrive(driveSystem),
+    // new WaitUntilCommand(1),
+    // new AutoSimpleReverse(driveSystem));
+    // return drive;
 
   }
 }
