@@ -12,6 +12,7 @@ import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxRelativeEncoder.Type;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -43,9 +44,9 @@ public class DriveSystem extends DifferentialDriveSubsystem {
 
   private RelativeEncoder rightOneEncoder = rightOne.getEncoder();
 
-  public int direction = 1;
-  public int gear = 2;
-  public double gearScalar;
+  private int direction = 1;
+  private int gear = 2;
+  private double gearScalar;
 
 
   private DataLog log;
@@ -108,6 +109,14 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     odoRotationLog = new DoubleLogEntry(log, "drive/odometer/rotation");
   }
 
+  
+
+  public void setGear(int gear) {
+    this.gear = MathUtil.clamp(gear, 0, 3);
+  }
+
+
+
   public void drive(double xSpeed, double rotation) {
     switch (gear) {
       case 0:
@@ -161,6 +170,12 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     return new DifferentialDriveWheelSpeeds(leftOneEncoder.getVelocity() * ROTATIONS_TO_METERS / 60.0, -rightOneEncoder.getVelocity() * ROTATIONS_TO_METERS / 60.0);
   }
 
+  
+
+  public AHRS getGyro() {
+    return gyro;
+  }
+
   public void voltageDrive(double leftVolts, double rightVolts) {
     left.setVoltage(leftVolts);
     right.setVoltage(rightVolts);
@@ -179,6 +194,8 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     SmartDashboard.putNumber("Robot X", getRobotPosition().getX());
     SmartDashboard.putNumber("Left", getLeftDistance());
     SmartDashboard.putNumber("Right", getRightDistance());
+
+    SmartDashboard.putNumber("Roll", gyro.getRoll());
 
     DifferentialDriveWheelSpeeds velocity = getWheelSpeeds();
     SmartDashboard.putNumber("Left Velocity (mps)", velocity.leftMetersPerSecond);
