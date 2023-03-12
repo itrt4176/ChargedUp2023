@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
 import frc.irontigers.robot.Commands.AutoArmExtend;
-import frc.irontigers.robot.Commands.AutoBalanceOLD;
 import frc.irontigers.robot.Commands.AutoBalance;
 import frc.irontigers.robot.Commands.MoveArmToAngle;
 import frc.irontigers.robot.Commands.FollowTrajectory;
