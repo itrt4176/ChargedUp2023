@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.irontigers.robot.Constants.DriveVals.*;
@@ -58,6 +59,8 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   private AHRS gyro = new AHRS();
 
   private DifferentialDriveKinematics kinematics;
+
+  // private Field2d field;
 
   /** Creates a new DriveSystem. */
   public DriveSystem() {
@@ -99,6 +102,9 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     resetEncoders();
 
     kinematics = new DifferentialDriveKinematics(TRACK_WIDTH);
+
+    // field = new Field2d();
+    SmartDashboard.putData("Field", gameField);
 
     log = DataLogManager.getLog();
     gearLog = new IntegerLogEntry(log, "drive/gear");
@@ -175,6 +181,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     Pose2d pos = getRobotPosition();
     odoxLog.append(pos.getX());
     odoRotationLog.append(pos.getRotation().getDegrees());
+    gameField.setRobotPose(pos);
 
     SmartDashboard.putNumber("Robot X", getRobotPosition().getX());
     SmartDashboard.putNumber("Left", getLeftDistance());

@@ -61,6 +61,6 @@ public class MoveArmToAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(error) <= 1.0;
+    return Math.abs(error) <= 2.5;
   }
 }

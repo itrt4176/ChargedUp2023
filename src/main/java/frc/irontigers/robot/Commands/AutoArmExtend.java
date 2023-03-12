@@ -28,7 +28,7 @@ public class AutoArmExtend extends CommandBase {
     this.destination = destination;
     
     
-    addRequirements(arm);
+    // addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
@@ -41,7 +41,7 @@ public class AutoArmExtend extends CommandBase {
   @Override
   public void execute() {
     difference = destination - arm.getArmExtensionPosition();
-    double speed = MathUtil.clamp(difference * (0.85 / 3.0), -0.85, 0.85);
+    double speed = MathUtil.clamp(difference * (0.9 / 3.0), -0.9, 0.9);
 
     if (Math.abs(speed) < 0.07) { 
       return;

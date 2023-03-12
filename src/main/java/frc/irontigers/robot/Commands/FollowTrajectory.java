@@ -18,27 +18,24 @@ import static frc.irontigers.robot.Constants.DriveVals.*;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PathFollowingDemo extends SequentialCommandGroup {
+public class FollowTrajectory extends SequentialCommandGroup {
   /** Creates a new PathFollowingDemo. */
-  public PathFollowingDemo(PathPlannerTrajectory trajectory, DriveSystem driveSys) {
+  public FollowTrajectory(PathPlannerTrajectory trajectory, DriveSystem driveSys) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new InstantCommand(() -> driveSys.setRobotPosition(trajectory.getInitialPose())),
         new PPRamseteCommand(
-          trajectory, 
-          driveSys::getRobotPosition, 
-          new RamseteController(), 
-          new SimpleMotorFeedforward(S, V, A), 
-          driveSys.getKinematics(), 
-          driveSys::getWheelSpeeds,
-          new PIDController(LEFT_P, LEFT_I, LEFT_D),
-          new PIDController(RIGHT_P, RIGHT_I, RIGHT_D),
-          driveSys::voltageDrive,
-          false,
-          driveSys
-        ),
-        new InstantCommand(() -> driveSys.voltageDrive(0, 0))
-    );
+            trajectory,
+            driveSys::getRobotPosition,
+            new RamseteController(),
+            new SimpleMotorFeedforward(S, V, A),
+            driveSys.getKinematics(),
+            driveSys::getWheelSpeeds,
+            new PIDController(LEFT_P, LEFT_I, LEFT_D),
+            new PIDController(RIGHT_P, RIGHT_I, RIGHT_D),
+            driveSys::voltageDrive,
+            true,
+            driveSys),
+        new InstantCommand(() -> driveSys.voltageDrive(0, 0)));
   }
 }

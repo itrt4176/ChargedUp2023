@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -22,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
 import frc.irontigers.robot.Commands.AutoArmExtend;
 import frc.irontigers.robot.Commands.MoveArmToAngle;
-import frc.irontigers.robot.Commands.PathFollowingDemo;
+import frc.irontigers.robot.Commands.FollowTrajectory;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
 import frc.irontigers.robot.Commands.AutoSimpleReverse;
 import frc.irontigers.robot.Subsystems.Arm;
@@ -132,9 +134,8 @@ public class RobotContainer {
     // halfExtend.onTrue(autoHalfExtend);
     // fullExtend.onTrue(autoFullExtend);
 
-    autoPath.addOption("Simple Auto", "SimpleAuto");
+    autoPath.addOption("Simple Auto", "B4_HC_CS");
     autoPath.addOption("Super Auto", "SuperAuto");
-    autoPath.addOption("S-shape Demo", "Figure8");
     SmartDashboard.putData("Auto Path", autoPath);
   }
  
@@ -148,18 +149,34 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     String path = autoPath.getSelected();
 
-    PathPlannerTrajectory simple = PathPlanner.loadPath(path, 2.0, 1.0);
+    PathPlannerTrajectory autoTrajectory = PathPlanner.loadPath(path, 2.0, 0.63, true);
 
-    return new PathFollowingDemo(simple, driveSystem);
-    // SequentialCommandGroup drive = new SequentialCommandGroup(
-    // new MoveArmToAngle(arm, 205),
-    // new InstantCommand(() -> claw.setClawStateTrue()),
-    // new WaitCommand(1),
-    // new MoveArmToAngle(arm, 10),
-    // new InstantCommand(() -> claw.setClawStateFalse()),
-    // new AutoSimpleDrive(driveSystem),
-    // new WaitUntilCommand(1),
-    // new AutoSimpleReverse(driveSystem));
+    ParallelCommandGroup angleArmExtending = new ParallelCommandGroup(
+      new MoveArmToAngle(arm, 187.5),
+      new SequentialCommandGroup(
+        new WaitUntilCommand(() -> arm.getArmDegrees() >= 147.5),
+        new AutoArmExtend(arm, 20.25)
+      )
+    );
+
+    ParallelDeadlineGroup driveRetract = new FollowTrajectory(autoTrajectory, driveSystem).deadlineWith(
+      new ParallelCommandGroup(
+        new SequentialCommandGroup(
+          new WaitUntilCommand(() -> arm.getArmExtensionPosition() <= 20.5 - 12.0),
+          new InstantCommand(claw::close)
+        ),
+        new AutoArmExtend(arm, 0),
+        new MoveArmToAngle(arm, 2.5)
+      )
+    );
+
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> driveSystem.setRobotPosition(autoTrajectory.getInitialPose())),
+        angleArmExtending,
+        new InstantCommand(() -> claw.open()),
+        new WaitCommand(0.35),
+        driveRetract
+    );
     // return drive;
 
   }
