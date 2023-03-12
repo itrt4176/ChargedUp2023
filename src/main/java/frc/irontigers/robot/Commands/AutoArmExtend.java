@@ -4,8 +4,6 @@
 
 package frc.irontigers.robot.Commands;
 
-import org.opencv.features2d.FlannBasedMatcher;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.irontigers.robot.Constants;
@@ -43,7 +41,7 @@ public class AutoArmExtend extends CommandBase {
     difference = destination - arm.getArmExtensionPosition();
     double speed = MathUtil.clamp(difference * (0.9 / 3.0), -0.9, 0.9);
 
-    if (Math.abs(speed) < 0.07) { 
+    if (Math.abs(speed) < 0.14) { 
       return;
     }
 

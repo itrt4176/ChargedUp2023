@@ -54,8 +54,13 @@ public final class Constants {
         // public final static double ROTATOR_CONVERSION_FACTOR = 
     }
 
-    public static final class ClawVals{
+    public static final class ClawVals {
         // public final static int CLAW = 17;
-        
+
+    }
+    
+    public static final class AutoVals {
+        public static final double kAllowedChargeStationErrorDegrees = 2.5;
+        public static final double kChargeStationBalanceDriveSpeed = 0.4;
     }
 }

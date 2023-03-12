@@ -119,6 +119,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
 
   public void setGear(int gear) {
     this.gear = MathUtil.clamp(gear, 0, 3);
+    gearLog.append(gear);
   }
 
 
@@ -137,6 +138,8 @@ public class DriveSystem extends DifferentialDriveSubsystem {
       case 3:
         gearScalar = .8;
         break;
+      case 4:
+        gearScalar = 1.0;
     }
 
     super.drive(gearScalar * xSpeed, gearScalar * rotation);
