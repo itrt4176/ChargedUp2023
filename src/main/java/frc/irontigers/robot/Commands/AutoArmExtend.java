@@ -4,8 +4,6 @@
 
 package frc.irontigers.robot.Commands;
 
-import org.opencv.features2d.FlannBasedMatcher;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.irontigers.robot.Constants;
@@ -28,7 +26,7 @@ public class AutoArmExtend extends CommandBase {
     this.destination = destination;
     
     
-    addRequirements(arm);
+    // addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
@@ -41,9 +39,9 @@ public class AutoArmExtend extends CommandBase {
   @Override
   public void execute() {
     difference = destination - arm.getArmExtensionPosition();
-    double speed = MathUtil.clamp(difference * (.35/30), -.35, .35);
+    double speed = MathUtil.clamp(difference * (0.9 / 3.0), -0.9, 0.9);
 
-    if (Math.abs(speed) < .1){
+    if (Math.abs(speed) < 0.14) { 
       return;
     }
 
@@ -59,7 +57,7 @@ public class AutoArmExtend extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   return Math.abs(difference) <= 100.0;
+   return Math.abs(difference) <= 0.1;
   }
 }
 

@@ -37,7 +37,7 @@ public class MoveArmToAngle extends CommandBase {
     error = setpoint - arm.getArmDegrees();
     double speed = MathUtil.clamp(error * (0.7 / 30.0), -0.7, 0.7);
 
-    if (Math.abs(speed) < 0.1) {
+    if (Math.abs(speed) < 0.2) {
       return;
     }
 
@@ -61,6 +61,6 @@ public class MoveArmToAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(error) <= 1.0;
+    return Math.abs(error) <= 0.5;
   }
 }

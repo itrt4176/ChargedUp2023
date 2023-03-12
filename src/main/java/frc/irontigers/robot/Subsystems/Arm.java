@@ -22,8 +22,9 @@ public class Arm extends SubsystemBase {
  
 
   /** Creates a new Arm. */
-  private WPI_TalonFX armRotator;
+  private WPI_TalonFX armRotatorMain;
   private WPI_TalonFX armExtender;
+  private WPI_TalonFX armRotatorSub;
 
   private double armRotationPosition;
   private Pose2d armExtensionPosition;
@@ -32,56 +33,62 @@ public class Arm extends SubsystemBase {
   private DoubleLogEntry armExtensionLog;
 
   public Arm() {
-    armRotator = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR);
+    armRotatorMain = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR_MASTER);
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
 
-    armExtensionPosition = new Pose2d();
-    
-    
+    armRotatorSub = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR_SUB);
 
+    armRotatorSub.follow(armRotatorMain);
+    armRotatorSub.setInverted(true);
+    
+    
+    armExtender.setInverted(true);
 
     DataLog log = DataLogManager.getLog();{
       armPositionLog = new DoubleLogEntry(log, "arm/position");
       armExtensionLog = new DoubleLogEntry(log, "arm/extension");
     }
 
-    armRotator.setNeutralMode(NeutralMode.Brake);
+    armRotatorMain.setNeutralMode(NeutralMode.Brake);
     armExtender.setNeutralMode(NeutralMode.Brake);
   }
 
-  public WPI_TalonFX getArmExtender() {
-    return armExtender;
-  }
+  // public WPI_TalonFX getArmExtender() {
+  //   return armExtender;
+  // }
 
 
   public double getArmDegrees(){
-    return armRotator.getSelectedSensorPosition() * Constants.ArmVals.PULSES_TO_DEGREES;
+    return armRotatorMain.getSelectedSensorPosition() * Constants.ArmVals.PULSES_TO_DEGREES;
   }
 
   
      
   public void setRotationSpeed(double speed) {
-     armRotator.set(speed);
+     armRotatorMain.set(speed);
   }
 
   public void setExtensionSpeed(double speed) {
-    armExtender.set(speed);
+    // if (getArmExtensionPosition() <= 20.9375){
+    //   armExtender.set(speed);
+    // }else{
+    //   armExtender.set(0);
+    // }
+     armExtender.set(speed);
   }
 
   public double getRotatorPosition() {
-    double position = armRotator.getSelectedSensorPosition();
+    double position = armRotatorMain.getSelectedSensorPosition();
     armPositionLog.append(position);
 
  
     return position;
   }
-  public void setRotatorPosition(){
-    
-  }
+
 
 
    public double getArmExtensionPosition() {
-     double extensionPosition = armExtender.getSelectedSensorPosition();
+    double extensionPosition = armExtender.getSelectedSensorPosition() * Constants.ArmVals.EXTENDER_CONVERSION_FACTOR;
     armExtensionLog.append(extensionPosition);
     
     return extensionPosition;
@@ -96,6 +103,7 @@ public class Arm extends SubsystemBase {
     
     SmartDashboard.putNumber("Arm Position", getArmDegrees());
     SmartDashboard.putNumber("Arm Length", getArmExtensionPosition());
+    SmartDashboard.putNumber("Raw Rotator Pulses", armRotatorMain.getSelectedSensorPosition());
 
   }
 

@@ -4,16 +4,30 @@
 
 package frc.irontigers.robot;
 
+import java.time.Instant;
+
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
+import frc.irontigers.robot.Commands.AutoArmExtend;
+import frc.irontigers.robot.Commands.AutoBalance;
 import frc.irontigers.robot.Commands.MoveArmToAngle;
+import frc.irontigers.robot.Commands.FollowTrajectory;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
+import frc.irontigers.robot.Commands.AutoSimpleReverse;
 import frc.irontigers.robot.Subsystems.Arm;
 import frc.irontigers.robot.Subsystems.Claw;
 import frc.irontigers.robot.Subsystems.DriveSystem;
@@ -46,19 +60,29 @@ public class RobotContainer {
   private final Trigger gearShiftDown = mainController.leftBumper();
 
   private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(arm, mainController);
-  private final MoveArmToAngle armSetAngle90 = new MoveArmToAngle(arm, 90);
-  private final MoveArmToAngle armSetAngle180 = new MoveArmToAngle(arm, 180);
+  private final MoveArmToAngle armSetAngle190 = new MoveArmToAngle(arm, 190);
+  private final MoveArmToAngle armSetAngle205 = new MoveArmToAngle(arm, 205);
+
+  // private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
+  // private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 23/2.0);
+  // private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 23);
 
   private final Trigger toggleInvertButton = mainController.b();
 
   private final Trigger armRotationForward = mainController.y();
   private final Trigger armRotationBackward = mainController.a();
  
-  private final Trigger  armSet90 = mainController.povLeft();
-  private final Trigger armSet180 = mainController.povRight();
+  private final Trigger  armSet190 = mainController.povLeft();
+  private final Trigger armSet205 = mainController.povRight();
+
+  // private final Trigger fullRetract = mainController.povLeft();
+  // private final Trigger halfExtend = mainController.povUp();
+  // private final Trigger fullExtend = mainController.povRight();
 
   private final Trigger clawIn = mainController.povUp();
   private final Trigger clawOut = mainController.povDown();
+
+  private final SendableChooser<String> autoPath = new SendableChooser<>();
 
  
 
@@ -91,19 +115,30 @@ public class RobotContainer {
     armRotationBackward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
     // armStopRotation.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
 
-    armSet90.onTrue(armSetAngle90);
-    armSet180.onTrue(armSetAngle180);
+    armSet190.onTrue(armSetAngle190);
+    armSet205.onTrue(armSetAngle205);
 
-    clawIn.whileTrue(new StartEndCommand(
-      () -> claw.setClawOneSpeed(0.5), 
-      () -> claw.setClawOneSpeed(0)));
+    // clawIn.whileTrue(new StartEndCommand(
+    //   () -> claw.setClawOneSpeed(0.75), 
+    //   () -> claw.setClawOneSpeed(0)));
     // clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
-    clawOut.whileTrue(new StartEndCommand(
-      () -> claw.setClawOneSpeed(-0.5), 
-      () -> claw.setClawOneSpeed(0)));
-    // clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
+    clawIn.onTrue(new InstantCommand(() -> claw.open()));
+    clawOut.onTrue(new InstantCommand(() -> claw.close()));
 
+    // clawOut.whileTrue(new StartEndCommand(
+    //   () -> claw.setClawOneSpeed(-0.75), 
+    //   () -> claw.setClawOneSpeed(0)));
+    // // clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
+
+    // fullRetract.onTrue(autoFullRetract);
+    // halfExtend.onTrue(autoHalfExtend);
+    // fullExtend.onTrue(autoFullExtend);
+
+    autoPath.addOption("Simple Auto", "B4_CS");
+    autoPath.addOption("Super Auto", "SuperAuto");
+    SmartDashboard.putData("Auto Path", autoPath);
+    SmartDashboard.putData("BALANCE!", new AutoBalance(driveSystem));
   }
  
  
@@ -114,10 +149,39 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    SequentialCommandGroup drive = new SequentialCommandGroup(
-      new AutoSimpleDrive(driveSystem),
-      new WaitUntilCommand(14.5));
-      
-    return drive;
+    String path = autoPath.getSelected();
+
+    PathPlannerTrajectory autoTrajectory = PathPlanner.loadPath(path, 2.0, 0.63, true);
+
+    ParallelCommandGroup angleArmExtending = new ParallelCommandGroup(
+        new MoveArmToAngle(arm, 195),
+      new SequentialCommandGroup(
+            new WaitUntilCommand(() -> arm.getArmDegrees() >= 118.5),
+            new AutoArmExtend(arm, 23.6)
+      )
+    );
+
+    ParallelDeadlineGroup driveRetract = new FollowTrajectory(autoTrajectory, driveSystem).deadlineWith(
+      new ParallelCommandGroup(
+        new SequentialCommandGroup(
+                new WaitUntilCommand(() -> arm.getArmExtensionPosition() <= 23.6 - 12.0),
+          new InstantCommand(claw::close)
+        ),
+        new AutoArmExtend(arm, 0),
+        new MoveArmToAngle(arm, 2.5)
+      )
+    );
+
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> driveSystem.setRobotPosition(autoTrajectory.getInitialPose())),
+        angleArmExtending,
+        new WaitCommand(0.25),
+        new InstantCommand(() -> claw.open()),
+        new WaitCommand(0.25),
+        driveRetract,
+        new AutoBalance(driveSystem)
+    );
+    // return drive;
+
   }
 }
