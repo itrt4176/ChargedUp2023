@@ -25,7 +25,10 @@ import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
 import frc.irontigers.robot.Commands.AutoArmExtend;
 import frc.irontigers.robot.Commands.AutoBalance;
 import frc.irontigers.robot.Commands.MoveArmToAngle;
-import frc.irontigers.robot.Commands.FollowTrajectory;
+import frc.irontigers.robot.Commands.auto.AutoBuilder;
+import frc.irontigers.robot.Commands.auto.ConeToChargeStation;
+import frc.irontigers.robot.Commands.auto.FollowTrajectory;
+import frc.irontigers.robot.Commands.auto.PlaceHigh;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
 import frc.irontigers.robot.Commands.AutoSimpleReverse;
 import frc.irontigers.robot.Subsystems.Arm;
@@ -82,7 +85,9 @@ public class RobotContainer {
   private final Trigger clawIn = mainController.povUp();
   private final Trigger clawOut = mainController.povDown();
 
-  private final SendableChooser<String> autoPath = new SendableChooser<>();
+  private final SendableChooser<Command> autoPath = new SendableChooser<>();
+
+  private final AutoBuilder autoBuilder = new AutoBuilder(driveSystem, arm, claw);
 
  
 
@@ -135,13 +140,17 @@ public class RobotContainer {
     // halfExtend.onTrue(autoHalfExtend);
     // fullExtend.onTrue(autoFullExtend);
 
-    autoPath.addOption("Simple Auto", "B4_CS");
-    autoPath.addOption("Super Auto", "SuperAuto");
-    SmartDashboard.putData("Auto Path", autoPath);
-    SmartDashboard.putData("BALANCE!", new AutoBalance(driveSystem));
+    
   }
  
  
+
+  /**
+   * @return the autoBuilder
+   */
+  public AutoBuilder getAutoBuilder() {
+    return autoBuilder;
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -149,39 +158,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    String path = autoPath.getSelected();
-
-    PathPlannerTrajectory autoTrajectory = PathPlanner.loadPath(path, 2.0, 0.63, true);
-
-    ParallelCommandGroup angleArmExtending = new ParallelCommandGroup(
-        new MoveArmToAngle(arm, 195),
-      new SequentialCommandGroup(
-            new WaitUntilCommand(() -> arm.getArmDegrees() >= 118.5),
-            new AutoArmExtend(arm, 23.6)
-      )
-    );
-
-    ParallelDeadlineGroup driveRetract = new FollowTrajectory(autoTrajectory, driveSystem).deadlineWith(
-      new ParallelCommandGroup(
-        new SequentialCommandGroup(
-                new WaitUntilCommand(() -> arm.getArmExtensionPosition() <= 23.6 - 12.0),
-          new InstantCommand(claw::close)
-        ),
-        new AutoArmExtend(arm, 0),
-        new MoveArmToAngle(arm, 2.5)
-      )
-    );
-
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> driveSystem.setRobotPosition(autoTrajectory.getInitialPose())),
-        angleArmExtending,
-        new WaitCommand(0.25),
-        new InstantCommand(() -> claw.open()),
-        new WaitCommand(0.25),
-        driveRetract,
-        new AutoBalance(driveSystem)
-    );
-    // return drive;
+    return autoPath.getSelected();
 
   }
 }
