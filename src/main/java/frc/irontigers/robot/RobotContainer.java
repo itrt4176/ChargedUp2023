@@ -25,6 +25,7 @@ import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
 import frc.irontigers.robot.Commands.AutoArmExtend;
 import frc.irontigers.robot.Commands.AutoBalance;
 import frc.irontigers.robot.Commands.MoveArmToAngle;
+import frc.irontigers.robot.Commands.auto.AutoBuilder;
 import frc.irontigers.robot.Commands.auto.ConeToChargeStation;
 import frc.irontigers.robot.Commands.auto.FollowTrajectory;
 import frc.irontigers.robot.Commands.auto.PlaceHigh;
@@ -86,6 +87,8 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoPath = new SendableChooser<>();
 
+  private final AutoBuilder autoBuilder = new AutoBuilder(driveSystem, arm, claw);
+
  
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -137,19 +140,17 @@ public class RobotContainer {
     // halfExtend.onTrue(autoHalfExtend);
     // fullExtend.onTrue(autoFullExtend);
 
-    PathPlannerTrajectory b1B2Path = PathPlanner.loadPath("B1_B2", 2.75, 1.5, true);
-
-    Command b1B2 = new InstantCommand(() -> driveSystem.setRobotPosition(b1B2Path.getInitialPose())).andThen(new FollowTrajectory(b1B2Path, driveSystem));
-
-    // autoPath.addOption("B1 to B2", b1B2);
-    autoPath.addOption("B4 to CS", new ConeToChargeStation(driveSystem, arm, claw, "B4_CS"));
-    autoPath.addOption("B4 to CS", new ConeToChargeStation(driveSystem, arm, claw, "B5_CS"));
-    autoPath.addOption("B6 to CS", new ConeToChargeStation(driveSystem, arm, claw, "B6_CS"));
-    SmartDashboard.putData("Auto Path", autoPath);
-    SmartDashboard.putData("BALANCE!", new AutoBalance(driveSystem));
+    
   }
  
  
+
+  /**
+   * @return the autoBuilder
+   */
+  public AutoBuilder getAutoBuilder() {
+    return autoBuilder;
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
