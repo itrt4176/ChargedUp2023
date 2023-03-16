@@ -71,7 +71,7 @@ public class AutoBuilder {
     }
     
     public void periodic() {
-        StartPosition selectedStart = StartPosition.valueOf(startChooser.getSelected());
+        StartPosition selectedStart = (startChooser.getSelected() != null) ? StartPosition.valueOf(startChooser.getSelected()) : null;
 
         if (selectedStart == null || selectedStart.equals(lastStart)) {
             return;
@@ -84,12 +84,13 @@ public class AutoBuilder {
             endChooser.addOption(endPos.toString(), endPos.name());
         }
 
+        
         configLayout.add("End Position", endChooser);
     }
 
     public Command getAutonomousCommand() {
-        StartPosition selectedStart = StartPosition.valueOf(startChooser.getSelected());
-        EndPosition selectedEnd = EndPosition.valueOf(endChooser.getSelected());
+        StartPosition selectedStart = (startChooser.getSelected() != null) ? StartPosition.valueOf(startChooser.getSelected()) : null;
+        EndPosition selectedEnd = (endChooser.getSelected() != null) ? EndPosition.valueOf(endChooser.getSelected()) : null;
 
         if (selectedStart == null || selectedEnd == null) {
             return null;
