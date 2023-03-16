@@ -117,7 +117,14 @@ public class RobotContainer {
     armRotationForward.onTrue(new InstantCommand(() -> arm.setRotationSpeed(.15)));
     armRotationForward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
 
-    armRotationBackward.onTrue(new InstantCommand(() -> arm.setRotationSpeed(-.15)));
+    armRotationBackward.onTrue(new InstantCommand(() -> {
+        if (arm.getArmDegrees() > 0) {
+          arm.setRotationSpeed(-.15);
+        } else {
+          arm.setRotationSpeed(0);
+        }
+      }
+    ));
     armRotationBackward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
     // armStopRotation.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
 
