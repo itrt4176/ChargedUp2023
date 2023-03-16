@@ -68,6 +68,10 @@ public class Arm extends SubsystemBase {
      armRotatorMain.set(speed);
   }
 
+  public boolean isLimitSwitchPressed(){
+    return armRotatorMain.getSensorCollection().isRevLimitSwitchClosed() == 1; 
+  }
+
   public void setExtensionSpeed(double speed) {
     // if (getArmExtensionPosition() <= 20.9375){
     //   armExtender.set(speed);
