@@ -37,6 +37,7 @@ import frc.irontigers.robot.Subsystems.DriveSystem;
 import frc.tigerlib.XboxControllerIT;
 import frc.tigerlib.command.DifferentialJoystickDrive;
 import frc.tigerlib.command.ToggleInversionCommand;
+import frc.irontigers.robot.Subsystems.Arm.*;
 
 
 
@@ -64,26 +65,26 @@ public class RobotContainer {
 
   private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(arm, mainController);
   private final MoveArmToAngle armSetAngle190 = new MoveArmToAngle(arm, 190);
-  private final MoveArmToAngle armSetAngle205 = new MoveArmToAngle(arm, 205);
+  private final MoveArmToAngle armSetAngle0 = new MoveArmToAngle(arm, 15);
 
   // private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
   // private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 23/2.0);
-  // private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 23);
+  private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 23.5);
 
   private final Trigger toggleInvertButton = mainController.b();
 
-  private final Trigger armRotationForward = mainController.y();
-  private final Trigger armRotationBackward = mainController.a();
+  private final Trigger armRotationForward = mainController.povUp();
+  private final Trigger armRotationBackward = mainController.povDown();
  
-  private final Trigger  armSet190 = mainController.povLeft();
-  private final Trigger armSet205 = mainController.povRight();
+  private final Trigger  armSet190 = mainController.povRight();
+  private final Trigger armSet205 = mainController.povLeft();
 
   // private final Trigger fullRetract = mainController.povLeft();
   // private final Trigger halfExtend = mainController.povUp();
-  // private final Trigger fullExtend = mainController.povRight();
+  private final Trigger fullExtend = mainController.x();
 
-  private final Trigger clawIn = mainController.povUp();
-  private final Trigger clawOut = mainController.povDown();
+  private final Trigger clawIn = mainController.y();
+  private final Trigger clawOut = mainController.a();
 
   private final SendableChooser<Command> autoPath = new SendableChooser<>();
 
@@ -120,8 +121,14 @@ public class RobotContainer {
     armRotationBackward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
     // armStopRotation.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
 
-    armSet190.onTrue(armSetAngle190);
-    armSet205.onTrue(armSetAngle205);
+    armSet190.onTrue(new SequentialCommandGroup(
+        new AutoArmExtend(arm, 0),
+        new MoveArmToAngle(arm, 185)
+    ));
+    armSet205.onTrue(new SequentialCommandGroup(
+      new AutoArmExtend(arm, 0),
+      new MoveArmToAngle(arm, 0)
+    ));
 
     // clawIn.whileTrue(new StartEndCommand(
     //   () -> claw.setClawOneSpeed(0.75), 
@@ -138,7 +145,7 @@ public class RobotContainer {
 
     // fullRetract.onTrue(autoFullRetract);
     // halfExtend.onTrue(autoHalfExtend);
-    // fullExtend.onTrue(autoFullExtend);
+    fullExtend.onTrue(autoFullExtend);
 
     
   }

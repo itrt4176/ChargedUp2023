@@ -33,13 +33,24 @@ public class ArmManualLengthAdjustment extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speed = .35 * (manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis());
-    if (speed < 0 && arm.getArmDegrees() <= 0){
-         arm.setExtensionSpeed(0);
-    }else {
-      arm.setExtensionSpeed(speed);
-    }
-   
+
+    // //if extending
+    //   if (arm.getArmExtender().getSelectedSensorPosition() > Constants.ArmVals.ARM_EXTENDER_UPPER_LIMIT) {
+    //     arm.setExtensionSpeed(0.35*(manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis()));
+    //   } else {
+    //     arm.setExtensionSpeed(0);
+    //   }
+    // //if retracting
+    //   if (arm.getArmExtender().getSelectedSensorPosition() < Constants.ArmVals.ARM_EXTENDER_LOWER_LIMIT) {
+    //     arm.setExtensionSpeed(0.35*(manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis()));
+    //   } else {
+    //     arm.setExtensionSpeed(0);
+    //   }
+    // } else {
+    //   arm.setExtensionSpeed(0);
+    // }
+
+    arm.setExtensionSpeed( .7 * (manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis()));
   }
 
   // Called once the command ends or is interrupted.
