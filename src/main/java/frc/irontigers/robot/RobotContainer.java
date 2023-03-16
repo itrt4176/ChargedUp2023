@@ -31,6 +31,7 @@ import frc.irontigers.robot.Commands.auto.FollowTrajectory;
 import frc.irontigers.robot.Commands.auto.PlaceHigh;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
 import frc.irontigers.robot.Commands.AutoSimpleReverse;
+import frc.irontigers.robot.Commands.HomeArm;
 import frc.irontigers.robot.Commands.ManualArmRotation;
 import frc.irontigers.robot.Subsystems.Arm;
 import frc.irontigers.robot.Subsystems.Claw;
@@ -66,6 +67,16 @@ public class RobotContainer {
   private final Trigger gearShiftDown = mainController.leftBumper();
 
   private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(arm, mainController);
+  private final MoveArmToAngle armSetAngle190 = new MoveArmToAngle(arm, 190);
+  private final MoveArmToAngle armSetAngle0 = new MoveArmToAngle(arm, 15);
+
+  private final SequentialCommandGroup homeArm = new SequentialCommandGroup(
+    new ParallelCommandGroup(
+      new MoveArmToAngle(arm, 15),
+      new AutoArmExtend(arm, 0)
+    ),
+    new HomeArm(arm)
+  );
 
   // private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
   // private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 23/2.0);
@@ -75,11 +86,20 @@ public class RobotContainer {
 
   // private final Trigger toggleInvertButton = mainController.b();
 
+  private final Trigger toggleInvertButton = mainController.b();
+
+  private final Trigger armRotationForward = mainController.povUp();
+  private final Trigger armRotationBackward = mainController.povDown();
+ 
+  private final Trigger  armSet190 = mainController.povRight();
+  private final Trigger armHomingButton = mainController.povLeft();
+
+  // private final Trigger fullRetract = mainController.povLeft();
+  // private final Trigger halfExtend = mainController.povUp();
   // private final Trigger armRotationForward = mainController.povUp();
   // private final Trigger armRotationButton = mainController.povDown();
  
   private final Trigger armSetTopPole = mainController.povRight();
-  private final Trigger armSet0 = mainController.povLeft();
   private final Trigger armSetLowPole = mainController.povUp();
 
   private final Trigger fullRetract = mainController.b();
@@ -118,7 +138,7 @@ public class RobotContainer {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
 
-    //toggleInvertButton.onTrue(toggleInversion);
+    //// toggleInvertButton.onTrue(toggleInversion);
 
     // armRotationForward.onTrue(new InstantCommand(() -> arm.setRotationSpeed(.15)));
     // armRotationForward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
@@ -130,10 +150,9 @@ public class RobotContainer {
         new AutoArmExtend(arm, 0),
         new MoveArmToAngle(arm, 185)
     ));
-    armSet0.onTrue(new SequentialCommandGroup( //not renamed
-      new AutoArmExtend(arm, 0),
-      new MoveArmToAngle(arm, 0)
-    ));
+
+    armHomingButton.onTrue(homeArm);
+
     armSetLowPole.onTrue(new SequentialCommandGroup(
       new AutoArmExtend(arm, 0),
       new MoveArmToAngle(arm, 175)

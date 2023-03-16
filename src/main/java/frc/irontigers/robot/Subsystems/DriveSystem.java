@@ -22,6 +22,7 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.datalog.IntegerLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -45,7 +46,6 @@ public class DriveSystem extends DifferentialDriveSubsystem {
 
   private RelativeEncoder rightOneEncoder = rightOne.getEncoder();
 
-  private int direction = 1;
   private int gear = 2;
   private double gearScalar;
 
@@ -195,6 +195,12 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   public void periodic() {
     // This method will be called once per scheduler run
     super.periodic();
+
+    if (DriverStation.isAutonomous()) {
+      setStandard();
+    } else {
+      setInverted();
+    }
 
     Pose2d pos = getRobotPosition();
     odoxLog.append(pos.getX());

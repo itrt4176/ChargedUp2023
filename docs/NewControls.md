@@ -11,4 +11,4 @@ Arm Manual Extend - RT (Done)
 Arm Manual Retract - LT (Done)
 Arm Manual Angle - Right Joy Y (Evan)
 Claw Toggle - Y (Evan)
-Auto Balance Toggle - Select (Manos)
+Auto Balance Toggle - ~~Select (Manos)~~ NOT THIS COMP
