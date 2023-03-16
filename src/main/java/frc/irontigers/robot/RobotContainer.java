@@ -31,6 +31,7 @@ import frc.irontigers.robot.Commands.auto.FollowTrajectory;
 import frc.irontigers.robot.Commands.auto.PlaceHigh;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
 import frc.irontigers.robot.Commands.AutoSimpleReverse;
+import frc.irontigers.robot.Commands.ManualArmRotation;
 import frc.irontigers.robot.Subsystems.Arm;
 import frc.irontigers.robot.Subsystems.Claw;
 import frc.irontigers.robot.Subsystems.DriveSystem;
@@ -51,13 +52,14 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here..
 
   private final XboxControllerIT mainController = new XboxControllerIT(0);
-  private final XboxControllerIT clawController = new XboxControllerIT(1);
+  // private final XboxControllerIT clawController = new XboxControllerIT(1);
   
   private final DriveSystem driveSystem = new DriveSystem();
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();
 
   private final DifferentialJoystickDrive joystickDrive = new DifferentialJoystickDrive(driveSystem, mainController);
+  private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController);
   private final ToggleInversionCommand toggleInversion = new ToggleInversionCommand(driveSystem);
 
   private final Trigger gearShiftUp = mainController.rightBumper();
@@ -74,7 +76,7 @@ public class RobotContainer {
   // private final Trigger toggleInvertButton = mainController.b();
 
   // private final Trigger armRotationForward = mainController.povUp();
-  private final Trigger armRotationBackward = mainController.povDown();
+  // private final Trigger armRotationButton = mainController.povDown();
  
   private final Trigger armSetTopPole = mainController.povRight();
   private final Trigger armSet0 = mainController.povLeft();
@@ -85,7 +87,7 @@ public class RobotContainer {
   private final Trigger fullExtend = mainController.x();
 
   private final Trigger clawIn = mainController.y();
-  //private final Trigger clawOut = mainController.a();
+  private final Trigger clawOut = mainController.a();
 
   private final SendableChooser<Command> autoPath = new SendableChooser<>();
 
@@ -99,7 +101,10 @@ public class RobotContainer {
     configureButtonBindings();
     mainController.setDeadzone(.2);
     driveSystem.setDefaultCommand(joystickDrive);
-    arm.setDefaultCommand(armLengthAdjustment);
+    arm.setDefaultCommand(new ParallelCommandGroup(
+      armLengthAdjustment,
+      armRotation
+    ));
     //Maybe adjust once arm rotation is coded.
   }
 
@@ -118,15 +123,7 @@ public class RobotContainer {
     // armRotationForward.onTrue(new InstantCommand(() -> arm.setRotationSpeed(.15)));
     // armRotationForward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
 
-    armRotationBackward.onTrue(new InstantCommand(() -> {
-        if (arm.getArmDegrees() > 0) {
-          arm.setRotationSpeed(-.15);
-        } else {
-          arm.setRotationSpeed(0);
-        }
-      }
-    ));
-    armRotationBackward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
+    // armRotationButton.whileTrue(armRotation);
     // armStopRotation.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
 
     armSetTopPole.onTrue(new SequentialCommandGroup(
@@ -148,7 +145,7 @@ public class RobotContainer {
     // clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
 
     clawIn.onTrue(new InstantCommand(() -> claw.open()));
-    //clawOut.onTrue(new InstantCommand(() -> claw.close()));
+    clawOut.onTrue(new InstantCommand(() -> claw.close()));
 
     // clawOut.whileTrue(new StartEndCommand(
     //   () -> claw.setClawOneSpeed(-0.75), 
