@@ -60,15 +60,10 @@ public class RobotContainer {
   private final Claw claw = new Claw();
 
   private final DifferentialJoystickDrive joystickDrive = new DifferentialJoystickDrive(driveSystem, mainController);
-  private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController);
-  private final ToggleInversionCommand toggleInversion = new ToggleInversionCommand(driveSystem);
 
-  private final Trigger gearShiftUp = mainController.rightBumper();
-  private final Trigger gearShiftDown = mainController.leftBumper();
+  private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController);
 
   private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(arm, mainController);
-  private final MoveArmToAngle armSetAngle190 = new MoveArmToAngle(arm, 190);
-  private final MoveArmToAngle armSetAngle0 = new MoveArmToAngle(arm, 15);
 
   private final SequentialCommandGroup homeArm = new SequentialCommandGroup(
     new ParallelCommandGroup(
@@ -78,36 +73,22 @@ public class RobotContainer {
     new HomeArm(arm)
   );
 
-  // private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
-  // private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 23/2.0);
   private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 23.5);
   private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 11);
   private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
 
-  // private final Trigger toggleInvertButton = mainController.b();
-
-  private final Trigger toggleInvertButton = mainController.b();
-
-  private final Trigger armRotationForward = mainController.povUp();
-  private final Trigger armRotationBackward = mainController.povDown();
- 
-  private final Trigger  armSet190 = mainController.povRight();
   private final Trigger armHomingButton = mainController.povLeft();
-
-  // private final Trigger fullRetract = mainController.povLeft();
-  // private final Trigger halfExtend = mainController.povUp();
-  // private final Trigger armRotationForward = mainController.povUp();
-  // private final Trigger armRotationButton = mainController.povDown();
- 
-  private final Trigger armSetTopPole = mainController.povRight();
   private final Trigger armSetLowPole = mainController.povUp();
+  private final Trigger armSetTopPole = mainController.povRight();
+  
 
-  private final Trigger fullRetract = mainController.b();
   private final Trigger halfExtend = mainController.a();
+  private final Trigger fullRetract = mainController.b();
   private final Trigger fullExtend = mainController.x();
+  private final Trigger toggleClaw = mainController.y();
 
-  private final Trigger clawIn = mainController.y();
-  private final Trigger clawOut = mainController.a();
+  private final Trigger gearShiftUp = mainController.rightBumper();
+  private final Trigger gearShiftDown = mainController.leftBumper();
 
   private final SendableChooser<Command> autoPath = new SendableChooser<>();
 
@@ -138,14 +119,6 @@ public class RobotContainer {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
 
-    //// toggleInvertButton.onTrue(toggleInversion);
-
-    // armRotationForward.onTrue(new InstantCommand(() -> arm.setRotationSpeed(.15)));
-    // armRotationForward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
-
-    // armRotationButton.whileTrue(armRotation);
-    // armStopRotation.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
-
     armSetTopPole.onTrue(new SequentialCommandGroup(
         new AutoArmExtend(arm, 0),
         new MoveArmToAngle(arm, 185)
@@ -158,18 +131,7 @@ public class RobotContainer {
       new MoveArmToAngle(arm, 175)
     ));
 
-    // clawIn.whileTrue(new StartEndCommand(
-    //   () -> claw.setClawOneSpeed(0.75), 
-    //   () -> claw.setClawOneSpeed(0)));
-    // clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
-
-    clawIn.onTrue(new InstantCommand(() -> claw.open()));
-    clawOut.onTrue(new InstantCommand(() -> claw.close()));
-
-    // clawOut.whileTrue(new StartEndCommand(
-    //   () -> claw.setClawOneSpeed(-0.75), 
-    //   () -> claw.setClawOneSpeed(0)));
-    // // clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
+    toggleClaw.toggleOnTrue(new StartEndCommand(claw::open, claw::close));
 
     fullRetract.onTrue(autoFullRetract);
     halfExtend.onTrue(autoHalfExtend);
