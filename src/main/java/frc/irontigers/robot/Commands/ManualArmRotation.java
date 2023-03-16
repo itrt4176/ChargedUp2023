@@ -26,7 +26,7 @@ public class ManualArmRotation extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (arm.getArmDegrees() > 0){
+    if (arm.getArmDegrees() >= 0){
     arm.setRotationSpeed( .6 * controller.getRightY());
     }else{
       arm.setRotationSpeed(0);
