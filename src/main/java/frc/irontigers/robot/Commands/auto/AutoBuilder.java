@@ -81,9 +81,6 @@ public class AutoBuilder {
         for (EndPosition endPos : selectedStart.getValidEnds()) {
             endChooser.addOption(endPos.toString(), endPos.name());
         }
-
-        
-        configLayout.add("End Position", endChooser);
     }
 
     public Command getAutonomousCommand() {
