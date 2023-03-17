@@ -121,14 +121,14 @@ public class RobotContainer {
 
     armSetTopPole.onTrue(new SequentialCommandGroup(
         new AutoArmExtend(arm, 0),
-        new MoveArmToAngle(arm, 185)
+        new MoveArmToAngle(arm, 180)
     ));
 
     armHomingButton.onTrue(homeArm);
 
     armSetLowPole.onTrue(new SequentialCommandGroup(
       new AutoArmExtend(arm, 0),
-      new MoveArmToAngle(arm, 175)
+      new MoveArmToAngle(arm, 190)
     ));
 
     toggleClaw.toggleOnTrue(new StartEndCommand(claw::open, claw::close));

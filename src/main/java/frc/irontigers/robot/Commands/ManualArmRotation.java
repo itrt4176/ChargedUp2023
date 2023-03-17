@@ -30,7 +30,7 @@ public class ManualArmRotation extends CommandBase {
     if (arm.getArmDegrees() <= 0 && speed < 0){
       arm.setRotationSpeed(0);
     }else{
-      arm.setRotationSpeed( .6 * speed);
+      arm.setRotationSpeed( .55 * speed);
     }
   }
 
