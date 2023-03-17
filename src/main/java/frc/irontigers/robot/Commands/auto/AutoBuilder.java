@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -26,6 +25,7 @@ import frc.irontigers.robot.Commands.AutoBalance;
 import frc.irontigers.robot.Subsystems.Arm;
 import frc.irontigers.robot.Subsystems.Claw;
 import frc.irontigers.robot.Subsystems.DriveSystem;
+import frc.irontigers.robot.utils.SendableRemovableChooser;
 
 public class AutoBuilder {
     private DriveSystem drive;
@@ -36,11 +36,10 @@ public class AutoBuilder {
     private ShuffleboardLayout configLayout;
 
     private GenericEntry placePiece;
-    private SendableChooser<String> startChooser;
-    private SendableChooser<String> endChooser;
+    private SendableRemovableChooser<String> startChooser;
+    private SendableRemovableChooser<String> endChooser;
 
     private StartPosition lastStart;
-    private EndPosition lastEnd;
 
     public AutoBuilder(DriveSystem drive, Arm arm, Claw claw) {
         this.drive = drive;
@@ -56,18 +55,17 @@ public class AutoBuilder {
 
         placePiece = configLayout.add("Place Game Piece", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
 
-        startChooser = new SendableChooser<>();
+        startChooser = new SendableRemovableChooser<>();
         for (StartPosition startPos : StartPosition.values()) {
             startChooser.addOption(startPos.toString(), startPos.name());
         }
 
         configLayout.add("Start Position", startChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
 
-        endChooser = new SendableChooser<>();
+        endChooser = new SendableRemovableChooser<>();
         configLayout.add("End Position", endChooser);
 
         lastStart = null;
-        lastEnd = null;
     }
     
     public void periodic() {
@@ -79,7 +77,7 @@ public class AutoBuilder {
 
         lastStart = selectedStart;
 
-        endChooser = new SendableChooser<>();
+        endChooser.removeAllOptions();
         for (EndPosition endPos : selectedStart.getValidEnds()) {
             endChooser.addOption(endPos.toString(), endPos.name());
         }
