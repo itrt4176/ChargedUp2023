@@ -180,3 +180,7 @@ src/main/deploy/version.yaml
 simgui-ds.json
 simgui.json
 *.wpilog
+.Glass/
+.SysId/
+.OutlineViewer/
+networktables.json

@@ -10,13 +10,18 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.pathplanner.lib.server.PathPlannerServer;
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.irontigers.robot.utils.Version;
+import frc.irontigers.robot.Commands.auto.AutoBuilder;
+import frc.irontigers.robot.Subsystems.DriveSystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -24,10 +29,15 @@ import frc.irontigers.robot.utils.Version;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
+
 public class Robot extends TimedRobot {
   private Command autoCommand;
 
   private RobotContainer container;
+  private AutoBuilder autoBuilder;
+
+  // private final DriveSystem driveSystem = new DriveSystem();
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -53,10 +63,14 @@ public class Robot extends TimedRobot {
     }
 
     DataLogManager.log(version.toString());
+    System.out.println(version.toString());
+
+    PathPlannerServer.startServer(4176);
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     container = new RobotContainer();
+    autoBuilder = container.getAutoBuilder();
   }
 
   /**
@@ -77,15 +91,19 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    Shuffleboard.selectTab("Auto");
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    autoBuilder.periodic();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    autoCommand = container.getAutonomousCommand();
+    autoCommand = autoBuilder.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (autoCommand != null) {
