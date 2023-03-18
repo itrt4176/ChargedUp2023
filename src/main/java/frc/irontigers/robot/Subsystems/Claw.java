@@ -27,7 +27,7 @@ public class Claw extends SubsystemBase {
   public Claw() {
     // claw = new WPI_TalonFX(Constants.ClawVals.CLAW);
     
-    clawPnuematic = new Solenoid(PneumaticsModuleType.REVPH , 2);
+    clawPnuematic = new Solenoid(PneumaticsModuleType.CTREPCM , 0);
 
     DataLog log = DataLogManager.getLog();{
       clawPositionLog = new DoubleLogEntry(log, "claw/position");

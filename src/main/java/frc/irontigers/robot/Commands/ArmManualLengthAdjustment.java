@@ -50,7 +50,7 @@ public class ArmManualLengthAdjustment extends CommandBase {
     //   arm.setExtensionSpeed(0);
     // }
 
-    arm.setExtensionSpeed( .35 * (manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis()));
+    arm.setExtensionSpeed( .7 * (manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis()));
   }
 
   // Called once the command ends or is interrupted.

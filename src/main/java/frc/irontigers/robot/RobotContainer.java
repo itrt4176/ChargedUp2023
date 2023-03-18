@@ -31,12 +31,15 @@ import frc.irontigers.robot.Commands.auto.FollowTrajectory;
 import frc.irontigers.robot.Commands.auto.PlaceHigh;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
 import frc.irontigers.robot.Commands.AutoSimpleReverse;
+import frc.irontigers.robot.Commands.HomeArm;
+import frc.irontigers.robot.Commands.ManualArmRotation;
 import frc.irontigers.robot.Subsystems.Arm;
 import frc.irontigers.robot.Subsystems.Claw;
 import frc.irontigers.robot.Subsystems.DriveSystem;
 import frc.tigerlib.XboxControllerIT;
 import frc.tigerlib.command.DifferentialJoystickDrive;
 import frc.tigerlib.command.ToggleInversionCommand;
+import frc.irontigers.robot.Subsystems.Arm.*;
 
 
 
@@ -50,40 +53,42 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here..
 
   private final XboxControllerIT mainController = new XboxControllerIT(0);
-  private final XboxControllerIT clawController = new XboxControllerIT(1);
+  // private final XboxControllerIT clawController = new XboxControllerIT(1);
   
   private final DriveSystem driveSystem = new DriveSystem();
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();
 
   private final DifferentialJoystickDrive joystickDrive = new DifferentialJoystickDrive(driveSystem, mainController);
-  private final ToggleInversionCommand toggleInversion = new ToggleInversionCommand(driveSystem);
+
+  private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController);
+
+  private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(arm, mainController);
+
+  private final SequentialCommandGroup homeArm = new SequentialCommandGroup(
+    new ParallelCommandGroup(
+      new MoveArmToAngle(arm, 15),
+      new AutoArmExtend(arm, 0)
+    ),
+    new HomeArm(arm)
+  );
+
+  private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 23.5);
+  private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 11);
+  private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
+
+  private final Trigger armHomingButton = mainController.povLeft();
+  private final Trigger armSetLowPole = mainController.povUp();
+  private final Trigger armSetTopPole = mainController.povRight();
+  
+
+  private final Trigger halfExtend = mainController.a();
+  private final Trigger fullRetract = mainController.b();
+  private final Trigger fullExtend = mainController.x();
+  private final Trigger toggleClaw = mainController.y();
 
   private final Trigger gearShiftUp = mainController.rightBumper();
   private final Trigger gearShiftDown = mainController.leftBumper();
-
-  private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(arm, mainController);
-  private final MoveArmToAngle armSetAngle190 = new MoveArmToAngle(arm, 190);
-  private final MoveArmToAngle armSetAngle205 = new MoveArmToAngle(arm, 205);
-
-  // private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
-  // private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 23/2.0);
-  // private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 23);
-
-  private final Trigger toggleInvertButton = mainController.b();
-
-  private final Trigger armRotationForward = mainController.y();
-  private final Trigger armRotationBackward = mainController.a();
- 
-  private final Trigger  armSet190 = mainController.povLeft();
-  private final Trigger armSet205 = mainController.povRight();
-
-  // private final Trigger fullRetract = mainController.povLeft();
-  // private final Trigger halfExtend = mainController.povUp();
-  // private final Trigger fullExtend = mainController.povRight();
-
-  private final Trigger clawIn = mainController.povUp();
-  private final Trigger clawOut = mainController.povDown();
 
   private final SendableChooser<Command> autoPath = new SendableChooser<>();
 
@@ -97,7 +102,10 @@ public class RobotContainer {
     configureButtonBindings();
     mainController.setDeadzone(.2);
     driveSystem.setDefaultCommand(joystickDrive);
-    arm.setDefaultCommand(armLengthAdjustment);
+    arm.setDefaultCommand(new ParallelCommandGroup(
+      armLengthAdjustment,
+      armRotation
+    ));
     //Maybe adjust once arm rotation is coded.
   }
 
@@ -111,34 +119,23 @@ public class RobotContainer {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
 
-    toggleInvertButton.onTrue(toggleInversion);
+    armSetTopPole.onTrue(new SequentialCommandGroup(
+        new AutoArmExtend(arm, 0),
+        new MoveArmToAngle(arm, 180)
+    ));
 
-    armRotationForward.onTrue(new InstantCommand(() -> arm.setRotationSpeed(.15)));
-    armRotationForward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
+    armHomingButton.onTrue(homeArm);
 
-    armRotationBackward.onTrue(new InstantCommand(() -> arm.setRotationSpeed(-.15)));
-    armRotationBackward.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0)));
-    // armStopRotation.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
+    armSetLowPole.onTrue(new SequentialCommandGroup(
+      new AutoArmExtend(arm, 0),
+      new MoveArmToAngle(arm, 190)
+    ));
 
-    armSet190.onTrue(armSetAngle190);
-    armSet205.onTrue(armSetAngle205);
+    toggleClaw.toggleOnTrue(new StartEndCommand(claw::open, claw::close));
 
-    // clawIn.whileTrue(new StartEndCommand(
-    //   () -> claw.setClawOneSpeed(0.75), 
-    //   () -> claw.setClawOneSpeed(0)));
-    // clawIn.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
-
-    clawIn.onTrue(new InstantCommand(() -> claw.open()));
-    clawOut.onTrue(new InstantCommand(() -> claw.close()));
-
-    // clawOut.whileTrue(new StartEndCommand(
-    //   () -> claw.setClawOneSpeed(-0.75), 
-    //   () -> claw.setClawOneSpeed(0)));
-    // // clawOut.onFalse(new InstantCommand(() -> claw.setClawOneSpeed(0)));
-
-    // fullRetract.onTrue(autoFullRetract);
-    // halfExtend.onTrue(autoHalfExtend);
-    // fullExtend.onTrue(autoFullExtend);
+    fullRetract.onTrue(autoFullRetract);
+    halfExtend.onTrue(autoHalfExtend);
+    fullExtend.onTrue(autoFullExtend);
 
     
   }

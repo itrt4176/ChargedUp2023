@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.irontigers.robot.Constants;
+import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
+import frc.irontigers.robot.Commands.ManualArmRotation;
 import frc.irontigers.robot.Constants.ArmVals;
 
 public class Arm extends SubsystemBase {
@@ -66,6 +68,10 @@ public class Arm extends SubsystemBase {
      
   public void setRotationSpeed(double speed) {
      armRotatorMain.set(speed);
+  }
+
+  public boolean isLimitSwitchPressed(){
+    return armRotatorMain.getSensorCollection().isRevLimitSwitchClosed() == 1; 
   }
 
   public void setExtensionSpeed(double speed) {
