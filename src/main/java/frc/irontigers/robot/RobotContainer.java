@@ -120,17 +120,20 @@ public class RobotContainer {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
 
-    armSetTopPole.onTrue(new SequentialCommandGroup(
-        new AutoArmExtend(arm, 0),
-        new MoveArmToAngle(arm, 180)
-    ));
+    // armSetTopPole.onTrue(new SequentialCommandGroup(
+    //     new AutoArmExtend(arm, 0),
+    //     new MoveArmToAngle(arm, 180)
+    // ));
 
-    armHomingButton.toggleOnTrue(homeArm);
+    // armHomingButton.onTrue(new SequentialCommandGroup(
+    //     new AutoArmExtend(arm, 0),
+    //     new MoveArmToAngle(arm, 15)
+    // ));
 
-    armSetLowPole.onTrue(new SequentialCommandGroup(
-      new AutoArmExtend(arm, 0),
-      new MoveArmToAngle(arm, 190)
-    ));
+    // armSetLowPole.onTrue(new SequentialCommandGroup(
+    //   new AutoArmExtend(arm, 0),
+    //   new MoveArmToAngle(arm, 190)
+    // ));
 
     toggleClaw.toggleOnTrue(new StartEndCommand(claw::open, claw::close));
 

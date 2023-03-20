@@ -189,6 +189,8 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     left.setVoltage(leftVolts);
     right.setVoltage(rightVolts);
     drive.feed();
+    SmartDashboard.putNumber("Left Output Volts", leftVolts);
+    SmartDashboard.putNumber("Right Output Volts", rightVolts);
   }
 
   @Override
