@@ -30,6 +30,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.irontigers.robot.Constants.DriveVals.*;
+
+import frc.irontigers.robot.Commands.CommandJoystickDrive;
 import frc.tigerlib.subsystem.drive.DifferentialDriveSubsystem;
 
 public class DriveSystem extends DifferentialDriveSubsystem {
@@ -141,10 +143,14 @@ public class DriveSystem extends DifferentialDriveSubsystem {
       case 4:
         gearScalar = 1.0;
     }
+    
 
     super.drive(gearScalar * xSpeed, gearScalar * rotation);
     gearScalarLog.append(gearScalar);
   }
+  public void twoStickDrive(double leftSpeed, double rightSpeed){
+    super.drive(leftSpeed, rightSpeed);
+    }
 
   public void shiftUp(){
     if(gear < 3){ 
@@ -210,6 +216,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     SmartDashboard.putNumber("Robot X", getRobotPosition().getX());
     SmartDashboard.putNumber("Left", getLeftDistance());
     SmartDashboard.putNumber("Right", getRightDistance());
+    
 
     SmartDashboard.putNumber("Roll", gyro.getRoll());
 

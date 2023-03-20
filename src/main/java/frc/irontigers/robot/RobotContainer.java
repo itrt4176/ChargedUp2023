@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
 import frc.irontigers.robot.Commands.AutoArmExtend;
@@ -31,6 +32,7 @@ import frc.irontigers.robot.Commands.auto.FollowTrajectory;
 import frc.irontigers.robot.Commands.auto.PlaceHigh;
 import frc.irontigers.robot.Commands.AutoSimpleDrive;
 import frc.irontigers.robot.Commands.AutoSimpleReverse;
+import frc.irontigers.robot.Commands.CommandJoystickDrive;
 import frc.irontigers.robot.Commands.HomeArm;
 import frc.irontigers.robot.Commands.ManualArmRotation;
 import frc.irontigers.robot.Subsystems.Arm;
@@ -53,6 +55,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here..
 
   private final XboxControllerIT mainController = new XboxControllerIT(0);
+  private final CommandJoystick leftJoystick = new CommandJoystick(2);
+  private final CommandJoystick rightJoystick = new CommandJoystick(1);
   // private final XboxControllerIT clawController = new XboxControllerIT(1);
   
   private final DriveSystem driveSystem = new DriveSystem();
@@ -60,6 +64,7 @@ public class RobotContainer {
   private final Claw claw = new Claw();
 
   private final DifferentialJoystickDrive joystickDrive = new DifferentialJoystickDrive(driveSystem, mainController);
+  private final CommandJoystickDrive commandJoystickDrive = new CommandJoystickDrive(driveSystem, leftJoystick, rightJoystick);
 
   private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController);
 
@@ -81,6 +86,7 @@ public class RobotContainer {
   private final Trigger armSetLowPole = mainController.povUp();
   private final Trigger armSetTopPole = mainController.povRight();
   
+  
 
   private final Trigger halfExtend = mainController.a();
   private final Trigger fullRetract = mainController.b();
@@ -100,8 +106,9 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button binding.
     configureButtonBindings();
-    mainController.setDeadzone(.2);
-    driveSystem.setDefaultCommand(joystickDrive);
+    driveSystem.setDefaultCommand(commandJoystickDrive);
+    // mainController.setDeadzone(.2);
+    // driveSystem.setDefaultCommand(joystickDrive);
     arm.setDefaultCommand(new ParallelCommandGroup(
       armLengthAdjustment,
       armRotation
@@ -119,17 +126,17 @@ public class RobotContainer {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
 
-    armSetTopPole.onTrue(new SequentialCommandGroup(
-        new AutoArmExtend(arm, 0),
-        new MoveArmToAngle(arm, 180)
-    ));
+    // armSetTopPole.onTrue(new SequentialCommandGroup(
+    //     new AutoArmExtend(arm, 0),
+    //     new MoveArmToAngle(arm, 180)
+    // ));
 
-    armHomingButton.onTrue(homeArm);
+    // armHomingButton.onTrue(homeArm);
 
-    armSetLowPole.onTrue(new SequentialCommandGroup(
-      new AutoArmExtend(arm, 0),
-      new MoveArmToAngle(arm, 190)
-    ));
+    // armSetLowPole.onTrue(new SequentialCommandGroup(
+    //   new AutoArmExtend(arm, 0),
+    //   new MoveArmToAngle(arm, 190)
+    // ));
 
     toggleClaw.toggleOnTrue(new StartEndCommand(claw::open, claw::close));
 
