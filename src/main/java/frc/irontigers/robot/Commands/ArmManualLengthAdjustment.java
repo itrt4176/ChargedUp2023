@@ -7,23 +7,23 @@ package frc.irontigers.robot.Commands;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.irontigers.robot.Constants;
-import frc.irontigers.robot.Subsystems.Arm.*;
-import frc.irontigers.robot.Subsystems.Arm;
+import frc.irontigers.robot.Subsystems.ArmRotator.*;
+import frc.irontigers.robot.Subsystems.ArmExtender;
+import frc.irontigers.robot.Subsystems.ArmRotator;
 
 import frc.tigerlib.XboxControllerIT;
 
 public class ArmManualLengthAdjustment extends CommandBase {
   /** Creates a new ArmManualLengthAdjustment. */
-  Arm arm;
+  ArmExtender armExtender;
   XboxControllerIT manualController;
-  public ArmManualLengthAdjustment(Arm arm, XboxControllerIT manualController) {
+  public ArmManualLengthAdjustment(ArmExtender armExtender, XboxControllerIT manualController) {
     
     // Use addRequirements() here to declare subsystem dependencies.
-    this.arm = arm;
+    this.armExtender = armExtender;
     this.manualController = manualController;
     
-
-    addRequirements(arm);
+    addRequirements(armExtender);
   }
 
   // Called when the command is initially scheduled.
@@ -50,7 +50,7 @@ public class ArmManualLengthAdjustment extends CommandBase {
     //   arm.setExtensionSpeed(0);
     // }
 
-    arm.setExtensionSpeed( .7 * (manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis()));
+    armExtender.setExtensionSpeed( .7 * (manualController.getRightTriggerAxis() - manualController.getLeftTriggerAxis()));
   }
 
   // Called once the command ends or is interrupted.

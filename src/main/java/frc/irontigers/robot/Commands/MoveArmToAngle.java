@@ -7,21 +7,21 @@ package frc.irontigers.robot.Commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.irontigers.robot.Subsystems.Arm;
+import frc.irontigers.robot.Subsystems.ArmRotator;
 import frc.tigerlib.XboxControllerIT;
 
 public class MoveArmToAngle extends CommandBase {
-  private Arm arm;
+  private ArmRotator armRotator;
   private double armAngle;
   private double setpoint;
   private double error;
   /** Creates a new ArmSetAngle. */
-  public MoveArmToAngle(Arm arm, double setpoint) {
+  public MoveArmToAngle(ArmRotator armRotator, double setpoint) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.arm = arm;
+    this.armRotator = armRotator;
     this.armAngle = armAngle;
     this.setpoint = setpoint;
-    addRequirements(arm);
+    addRequirements(armRotator);
   }
 
   // Called when the command is initially scheduled.
@@ -34,7 +34,7 @@ public class MoveArmToAngle extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    error = setpoint - arm.getArmDegrees();
+    error = setpoint - armRotator.getArmDegrees();
     double speed = MathUtil.clamp(error * (0.7 / 30.0), -0.7, 0.7);
 
     if (Math.abs(speed) < 0.2) {
@@ -47,7 +47,7 @@ public class MoveArmToAngle extends CommandBase {
     //   speed = -0.7;
     // }
 
-    arm.setRotationSpeed(speed);
+    armRotator.setRotationSpeed(speed);
   }
 
   
@@ -55,7 +55,7 @@ public class MoveArmToAngle extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    arm.setRotationSpeed(0);
+    armRotator.setRotationSpeed(0);
   }
 
   // Returns true when the command should end.

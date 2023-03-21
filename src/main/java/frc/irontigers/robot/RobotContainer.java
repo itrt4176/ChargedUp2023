@@ -35,14 +35,15 @@ import frc.irontigers.robot.Commands.AutoSimpleReverse;
 import frc.irontigers.robot.Commands.CommandJoystickDrive;
 import frc.irontigers.robot.Commands.HomeArm;
 import frc.irontigers.robot.Commands.ManualArmRotation;
-import frc.irontigers.robot.Subsystems.Arm;
+import frc.irontigers.robot.Subsystems.ArmExtender;
+import frc.irontigers.robot.Subsystems.ArmRotator;
 import frc.irontigers.robot.Subsystems.Claw;
 import frc.irontigers.robot.Subsystems.DriveSystem;
 import frc.irontigers.robot.Subsystems.Intake;
 import frc.tigerlib.XboxControllerIT;
 import frc.tigerlib.command.DifferentialJoystickDrive;
 import frc.tigerlib.command.ToggleInversionCommand;
-import frc.irontigers.robot.Subsystems.Arm.*;
+import frc.irontigers.robot.Subsystems.ArmRotator.*;
 
 
 
@@ -61,28 +62,30 @@ public class RobotContainer {
   // private final XboxControllerIT clawController = new XboxControllerIT(1);
   
   private final DriveSystem driveSystem = new DriveSystem();
-  private final Arm arm = new Arm();
+  private final ArmRotator armRotator = new ArmRotator();
+  private final ArmExtender armExtender = new ArmExtender();
+
   private final Claw claw = new Claw();
   private final Intake intake = new Intake();
 
   private final DifferentialJoystickDrive joystickDrive = new DifferentialJoystickDrive(driveSystem, mainController);
   private final CommandJoystickDrive commandJoystickDrive = new CommandJoystickDrive(driveSystem, leftJoystick, rightJoystick);
 
-  private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController /*rightJoystick*/);
+  private final ManualArmRotation armRotation = new ManualArmRotation(armRotator, mainController /*rightJoystick*/);
 
-  private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(arm, mainController);
+  private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(armExtender, mainController);
 
   private final SequentialCommandGroup homeArm = new SequentialCommandGroup(
     new ParallelCommandGroup(
-      new MoveArmToAngle(arm, 15),
-      new AutoArmExtend(arm, 0)
+      new MoveArmToAngle(armRotator, 15),
+      new AutoArmExtend(armExtender, 0)
     ),
-    new HomeArm(arm)
+    new HomeArm(armRotator)
   );
 
-  private final AutoArmExtend autoFullExtend = new AutoArmExtend(arm, 23.5);
-  private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 11);
-  private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
+  private final AutoArmExtend autoFullExtend = new AutoArmExtend(armExtender, 23.5);
+  private final AutoArmExtend autoHalfExtend = new AutoArmExtend(armExtender, 11);
+  private final AutoArmExtend autoFullRetract = new AutoArmExtend(armExtender, 0);
 
   private final Trigger armHomingButton = mainController.povLeft();
   private final Trigger armSetLowPole = mainController.povUp();
@@ -106,7 +109,7 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoPath = new SendableChooser<>();
 
-  private final AutoBuilder autoBuilder = new AutoBuilder(driveSystem, arm, claw);
+  private final AutoBuilder autoBuilder = new AutoBuilder(driveSystem, armRotator, armExtender, claw);
 
  
 
@@ -115,12 +118,14 @@ public class RobotContainer {
     // Configure the button binding.
     configureButtonBindings();
     driveSystem.setDefaultCommand(commandJoystickDrive);
+    armExtender.setDefaultCommand(armLengthAdjustment);
+    armRotator.setDefaultCommand(armRotation);
     // mainController.setDeadzone(.2);
     // driveSystem.setDefaultCommand(joystickDrive);
-    arm.setDefaultCommand(new ParallelCommandGroup(
-      armLengthAdjustment,
-      armRotation
-    ));
+    // arm.setDefaultCommand(new ParallelCommandGroup(
+    //   armLengthAdjustment,
+    //   armRotation
+    // ));
     //Maybe adjust once arm rotation is coded.
   }
 
@@ -140,11 +145,11 @@ public class RobotContainer {
     intakeOut.onTrue(new InstantCommand(() -> intake.setIntakeSpeed(0.15)));
     intakeOut.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
-    armRotateUp.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.7)));
-    armRotateUp.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
+    armRotateUp.onTrue(new InstantCommand(() -> armRotator.setRotationSpeed(0.7)));
+    armRotateUp.onFalse(new InstantCommand(() -> armRotator.setRotationSpeed(0.0)));
 
-    armRotateDown.onTrue(new InstantCommand(() -> arm.setRotationSpeed(-0.7)));
-    armRotateDown.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
+    armRotateDown.onTrue(new InstantCommand(() -> armRotator.setRotationSpeed(-0.7)));
+    armRotateDown.onFalse(new InstantCommand(() -> armRotator.setRotationSpeed(0.0)));
 
     // armSetTopPole.onTrue(new SequentialCommandGroup(
     //     new AutoArmExtend(arm, 0),

@@ -22,14 +22,16 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.irontigers.robot.Commands.AutoBalance;
-import frc.irontigers.robot.Subsystems.Arm;
+import frc.irontigers.robot.Subsystems.ArmExtender;
+import frc.irontigers.robot.Subsystems.ArmRotator;
 import frc.irontigers.robot.Subsystems.Claw;
 import frc.irontigers.robot.Subsystems.DriveSystem;
 import frc.irontigers.robot.utils.SendableRemovableChooser;
 
 public class AutoBuilder {
     private DriveSystem drive;
-    private Arm arm;
+    private ArmRotator armRotator;
+    private ArmExtender armExtender;
     private Claw claw;
 
     private ShuffleboardTab autoTab;
@@ -41,9 +43,10 @@ public class AutoBuilder {
 
     private StartPosition lastStart;
 
-    public AutoBuilder(DriveSystem drive, Arm arm, Claw claw) {
+    public AutoBuilder(DriveSystem drive, ArmRotator armRotator, ArmExtender armExtender, Claw claw) {
         this.drive = drive;
-        this.arm = arm;
+        this.armRotator = armRotator;
+        this.armExtender = armExtender;
         this.claw = claw;
 
         autoTab = Shuffleboard.getTab("Auto");
@@ -100,12 +103,12 @@ public class AutoBuilder {
         if (placePiece.getBoolean(false)) {
             return new SequentialCommandGroup(
                 new InstantCommand(() -> drive.setRobotPosition(trajectory.getInitialPose())),
-                new PlaceHigh(arm),
+                new PlaceHigh(armRotator, armExtender),
                 new WaitCommand(0.25),
                 new InstantCommand(claw::open),
                 new WaitCommand(0.25),
                 new FollowTrajectory(trajectory, drive)
-                    .deadlineWith(new RetractAndSwitchArm(arm, claw)),
+                    .deadlineWith(new RetractAndSwitchArm(armExtender, armRotator, claw)),
                 new AutoBalance(drive)
             );
         } else {

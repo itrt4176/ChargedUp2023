@@ -7,20 +7,20 @@ package frc.irontigers.robot.Commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.irontigers.robot.Subsystems.Arm;
+import frc.irontigers.robot.Subsystems.ArmRotator;
 import frc.tigerlib.XboxControllerIT;
 
 public class ManualArmRotation extends CommandBase {
   /** Creates a new ManualArmRotation. */
-  private Arm arm;
+  private ArmRotator armRotator;
   private XboxControllerIT controller;
   private CommandJoystick joystick;
-  public ManualArmRotation(Arm arm, XboxControllerIT controller /*CommandJoystick joystick*/) {
+  public ManualArmRotation(ArmRotator armRotator, XboxControllerIT controller /*CommandJoystick joystick*/) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.arm = arm;
+    this.armRotator = armRotator;
     this.controller = controller;
     //this.joystick = joystick;
-    // addRequirements(arm); ??
+    addRequirements(armRotator);
   }
 
   // Called when the command is initially scheduled.
@@ -32,10 +32,10 @@ public class ManualArmRotation extends CommandBase {
   
   public void execute() {
     double speed = controller.getRightY();
-    if (arm.getArmDegrees() <= 0 && speed < 0){
-      arm.setRotationSpeed(0);
+    if (armRotator.getArmDegrees() <= 0 && speed < 0){
+      armRotator.setRotationSpeed(0);
     }else{
-      arm.setRotationSpeed( .55 * speed);
+      armRotator.setRotationSpeed( .55 * speed);
     }
   }
   

@@ -20,39 +20,30 @@ import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
 import frc.irontigers.robot.Commands.ManualArmRotation;
 import frc.irontigers.robot.Constants.ArmVals;
 
-public class Arm extends SubsystemBase {
+public class ArmRotator extends SubsystemBase {
  
 
   /** Creates a new Arm. */
   private WPI_TalonFX armRotatorMain;
-  private WPI_TalonFX armExtender;
   private WPI_TalonFX armRotatorSub;
 
   private double armRotationPosition;
   private Pose2d armExtensionPosition;
 
   private DoubleLogEntry armPositionLog;
-  private DoubleLogEntry armExtensionLog;
 
-  public Arm() {
+  public ArmRotator() {
     armRotatorMain = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR_MASTER);
-    armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
-
     armRotatorSub = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR_SUB);
 
     armRotatorSub.follow(armRotatorMain);
     armRotatorSub.setInverted(true);
-    
-    
-    armExtender.setInverted(true);
 
     DataLog log = DataLogManager.getLog();{
       armPositionLog = new DoubleLogEntry(log, "arm/position");
-      armExtensionLog = new DoubleLogEntry(log, "arm/extension");
     }
 
     armRotatorMain.setNeutralMode(NeutralMode.Brake);
-    armExtender.setNeutralMode(NeutralMode.Brake);
   }
 
   // public WPI_TalonFX getArmExtender() {
@@ -74,15 +65,6 @@ public class Arm extends SubsystemBase {
     return armRotatorMain.getSensorCollection().isRevLimitSwitchClosed() == 1; 
   }
 
-  public void setExtensionSpeed(double speed) {
-    // if (getArmExtensionPosition() <= 20.9375){
-    //   armExtender.set(speed);
-    // }else{
-    //   armExtender.set(0);
-    // }
-     armExtender.set(speed);
-  }
-
   public double getRotatorPosition() {
     double position = armRotatorMain.getSelectedSensorPosition();
     armPositionLog.append(position);
@@ -91,16 +73,6 @@ public class Arm extends SubsystemBase {
     return position;
   }
 
-
-
-   public double getArmExtensionPosition() {
-    double extensionPosition = armExtender.getSelectedSensorPosition() * Constants.ArmVals.EXTENDER_CONVERSION_FACTOR;
-    armExtensionLog.append(extensionPosition);
-    
-    return extensionPosition;
-  }
-
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -108,7 +80,6 @@ public class Arm extends SubsystemBase {
 
     
     SmartDashboard.putNumber("Arm Position", getArmDegrees());
-    SmartDashboard.putNumber("Arm Length", getArmExtensionPosition());
     SmartDashboard.putNumber("Raw Rotator Pulses", armRotatorMain.getSelectedSensorPosition());
 
   }

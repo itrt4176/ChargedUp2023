@@ -7,26 +7,27 @@ package frc.irontigers.robot.Commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.irontigers.robot.Constants;
-import frc.irontigers.robot.Subsystems.Arm;
+import frc.irontigers.robot.Subsystems.ArmExtender;
+import frc.irontigers.robot.Subsystems.ArmRotator;
 import frc.tigerlib.XboxControllerIT;
 
 public class AutoArmExtend extends CommandBase {
   /** Creates a new AutoArmExtend. */
-  Arm arm;
+  ArmExtender armExtender;
   XboxControllerIT manualController;
   double destination;
   boolean extending;
   double difference;
 
-  public AutoArmExtend(Arm arm, double destination) {
+  public AutoArmExtend(ArmExtender armExtender, double destination) {
 
     // Use addRequirements() here to declare subsystem dependencies.
-    this.arm = arm;
+    this.armExtender = armExtender;
     this.manualController = manualController;
     this.destination = destination;
     
     
-    // addRequirements(arm);
+    addRequirements(armExtender);
   }
 
   // Called when the command is initially scheduled.
@@ -38,20 +39,20 @@ public class AutoArmExtend extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    difference = destination - arm.getArmExtensionPosition();
+    difference = destination - armExtender.getArmExtensionPosition();
     double speed = MathUtil.clamp(difference * (0.9 / 3.0), -0.9, 0.9);
 
     if (Math.abs(speed) < 0.14) { 
       return;
     }
 
-    arm.setExtensionSpeed(speed);
+    armExtender.setExtensionSpeed(speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    arm.setExtensionSpeed(0);
+    armExtender.setExtensionSpeed(0);
   }
 
   // Returns true when the command should end.

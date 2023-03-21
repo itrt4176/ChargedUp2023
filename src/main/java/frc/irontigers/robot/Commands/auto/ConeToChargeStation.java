@@ -11,7 +11,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.irontigers.robot.Commands.AutoBalance;
-import frc.irontigers.robot.Subsystems.Arm;
+import frc.irontigers.robot.Subsystems.ArmExtender;
+import frc.irontigers.robot.Subsystems.ArmRotator;
 import frc.irontigers.robot.Subsystems.Claw;
 import frc.irontigers.robot.Subsystems.DriveSystem;
 
@@ -20,18 +21,18 @@ import frc.irontigers.robot.Subsystems.DriveSystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ConeToChargeStation extends SequentialCommandGroup {
   /** Creates a new ConeToChargeStation. */
-  public ConeToChargeStation(DriveSystem driveSystem, Arm arm, Claw claw, String path) {
+  public ConeToChargeStation(DriveSystem driveSystem, ArmExtender armExtender, ArmRotator armRotator, Claw claw, String path) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     PathPlannerTrajectory autoTrajectory = PathPlanner.loadPath(path, 2.0, 0.63, true);
 
     addCommands(
         new InstantCommand(() -> driveSystem.setRobotPosition(autoTrajectory.getInitialPose())),
-        new PlaceHigh(arm),
+        new PlaceHigh(armRotator, armExtender),
         new WaitCommand(0.25),
         new InstantCommand(() -> claw.open()),
         new WaitCommand(0.25),
-        new FollowTrajectory(autoTrajectory, driveSystem).deadlineWith(new RetractAndSwitchArm(arm, claw)),
+        new FollowTrajectory(autoTrajectory, driveSystem).deadlineWith(new RetractAndSwitchArm(armExtender, armRotator, claw)),
         new AutoBalance(driveSystem)
     );
   }

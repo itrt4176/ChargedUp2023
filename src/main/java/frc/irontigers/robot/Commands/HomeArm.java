@@ -5,21 +5,21 @@
 package frc.irontigers.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.irontigers.robot.Subsystems.Arm;
+import frc.irontigers.robot.Subsystems.ArmRotator;
 
 public class HomeArm extends CommandBase {
-  private Arm arm;
+  private ArmRotator armRotator;
 
   /** Creates a new HomeArm. */
-  public HomeArm(Arm arm) {
+  public HomeArm(ArmRotator armRotator) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.arm = arm;
+    this.armRotator = armRotator;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    arm.setRotationSpeed(-.25);
+    armRotator.setRotationSpeed(-.25);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -29,12 +29,12 @@ public class HomeArm extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    arm.setRotationSpeed(0);
+    armRotator.setRotationSpeed(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return arm.isLimitSwitchPressed();
+    return armRotator.isLimitSwitchPressed();
   }
 }
