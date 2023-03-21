@@ -38,6 +38,7 @@ import frc.irontigers.robot.Commands.ManualArmRotation;
 import frc.irontigers.robot.Subsystems.Arm;
 import frc.irontigers.robot.Subsystems.Claw;
 import frc.irontigers.robot.Subsystems.DriveSystem;
+import frc.irontigers.robot.Subsystems.Intake;
 import frc.tigerlib.XboxControllerIT;
 import frc.tigerlib.command.DifferentialJoystickDrive;
 import frc.tigerlib.command.ToggleInversionCommand;
@@ -62,6 +63,7 @@ public class RobotContainer {
   private final DriveSystem driveSystem = new DriveSystem();
   private final Arm arm = new Arm();
   private final Claw claw = new Claw();
+  private final Intake intake = new Intake();
 
   private final DifferentialJoystickDrive joystickDrive = new DifferentialJoystickDrive(driveSystem, mainController);
   private final CommandJoystickDrive commandJoystickDrive = new CommandJoystickDrive(driveSystem, leftJoystick, rightJoystick);
@@ -99,8 +101,8 @@ public class RobotContainer {
   private final Trigger armRotateUp = rightJoystick.button(5);
   private final Trigger armRotateDown = leftJoystick.button(4);
 
-  private final Trigger grabberIn = rightJoystick.button(2);
-  private final Trigger grabberOut = rightJoystick.button(3);
+  private final Trigger intakeIn = rightJoystick.button(2);
+  private final Trigger intakeOut = rightJoystick.button(3);
 
   private final SendableChooser<Command> autoPath = new SendableChooser<>();
 
@@ -132,10 +134,11 @@ public class RobotContainer {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
 
-    grabberIn.onTrue(new InstantCommand(() -> claw.setGrabberSpeed(0.15)));
-    grabberIn.onFalse(new InstantCommand(() -> claw.setGrabberSpeed(0)));
-    grabberOut.onTrue(new InstantCommand(() -> claw.setGrabberSpeed(-0.15)));
-    grabberOut.onFalse(new InstantCommand(() -> claw.setGrabberSpeed(0)));
+    intakeIn.onTrue(new InstantCommand(() -> intake.setIntakeSpeed(-0.15)));
+    intakeIn.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
+
+    intakeOut.onTrue(new InstantCommand(() -> intake.setIntakeSpeed(0.15)));
+    intakeOut.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
     armRotateUp.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.7)));
     armRotateUp.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0.0)));

@@ -20,20 +20,12 @@ public class Claw extends SubsystemBase {
   /** Creates a new Claw. */
   private WPI_TalonFX claw;
   private Solenoid clawPnuematic;
-  private WPI_TalonFX grabberDom;
-  private WPI_TalonFX grabberSub;
 
   private DoubleLogEntry clawPositionLog;
   
 
   public Claw() {
     // claw = new WPI_TalonFX(Constants.ClawVals.CLAW);
-    grabberDom = new WPI_TalonFX(Constants.ClawVals.CLAW_GRABBER_MASTER);
-    grabberSub = new WPI_TalonFX(Constants.ClawVals.CLAW_GRABBER_SUB);
-    
-    grabberSub.follow(grabberDom);
-    grabberSub.setInverted(true);
-
     clawPnuematic = new Solenoid(PneumaticsModuleType.CTREPCM , 0);
 
     DataLog log = DataLogManager.getLog();{
@@ -42,8 +34,6 @@ public class Claw extends SubsystemBase {
     }
 
     // claw.setNeutralMode(NeutralMode .Brake);
-    grabberDom.setNeutralMode(NeutralMode.Brake);
-    grabberSub.setNeutralMode(NeutralMode.Brake);
   }
 
   // public void setClawOneSpeed(double speed) {
@@ -57,11 +47,6 @@ public class Claw extends SubsystemBase {
   public void close() {
     clawPnuematic.set(false);
   }
-  
-  public void setGrabberSpeed(double speed) {
-    grabberDom.set(speed);
-  }
- 
 
   // public double[] getClawPositions() {
   //   double[] clawPositions = {claw.getSelectedSensorPosition()};
