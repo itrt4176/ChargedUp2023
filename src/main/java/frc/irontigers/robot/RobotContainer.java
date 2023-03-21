@@ -96,6 +96,9 @@ public class RobotContainer {
   private final Trigger gearShiftUp = mainController.rightBumper();
   private final Trigger gearShiftDown = mainController.leftBumper();
 
+  private final Trigger armRotateUp = rightJoystick.button(5);
+  private final Trigger armRotateDown = leftJoystick.button(4);
+
   private final Trigger grabberIn = rightJoystick.button(2);
   private final Trigger grabberOut = rightJoystick.button(3);
 
@@ -133,6 +136,12 @@ public class RobotContainer {
     grabberIn.onFalse(new InstantCommand(() -> claw.setGrabberSpeed(0)));
     grabberOut.onTrue(new InstantCommand(() -> claw.setGrabberSpeed(-0.15)));
     grabberOut.onFalse(new InstantCommand(() -> claw.setGrabberSpeed(0)));
+
+    armRotateUp.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.7)));
+    armRotateUp.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
+
+    armRotateDown.onTrue(new InstantCommand(() -> arm.setRotationSpeed(-0.7)));
+    armRotateDown.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
 
     // armSetTopPole.onTrue(new SequentialCommandGroup(
     //     new AutoArmExtend(arm, 0),
