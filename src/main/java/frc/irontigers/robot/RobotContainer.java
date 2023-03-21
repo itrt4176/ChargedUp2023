@@ -66,7 +66,7 @@ public class RobotContainer {
   private final DifferentialJoystickDrive joystickDrive = new DifferentialJoystickDrive(driveSystem, mainController);
   private final CommandJoystickDrive commandJoystickDrive = new CommandJoystickDrive(driveSystem, leftJoystick, rightJoystick);
 
-  private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController);
+  private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController /*rightJoystick*/);
 
   private final ArmManualLengthAdjustment armLengthAdjustment = new ArmManualLengthAdjustment(arm, mainController);
 
@@ -95,6 +95,9 @@ public class RobotContainer {
 
   private final Trigger gearShiftUp = mainController.rightBumper();
   private final Trigger gearShiftDown = mainController.leftBumper();
+
+  private final Trigger grabberIn = rightJoystick.button(2);
+  private final Trigger grabberOut = rightJoystick.button(3);
 
   private final SendableChooser<Command> autoPath = new SendableChooser<>();
 
@@ -125,6 +128,11 @@ public class RobotContainer {
   private void configureButtonBindings() {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
+
+    grabberIn.onTrue(new InstantCommand(() -> claw.setGrabberSpeed(0.15)));
+    grabberIn.onFalse(new InstantCommand(() -> claw.setGrabberSpeed(0)));
+    grabberOut.onTrue(new InstantCommand(() -> claw.setGrabberSpeed(-0.15)));
+    grabberOut.onFalse(new InstantCommand(() -> claw.setGrabberSpeed(0)));
 
     // armSetTopPole.onTrue(new SequentialCommandGroup(
     //     new AutoArmExtend(arm, 0),
