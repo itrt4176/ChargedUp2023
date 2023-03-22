@@ -38,6 +38,8 @@ public class Arm extends SubsystemBase {
   private DoubleLogEntry armPositionLog;
   private DoubleLogEntry armExtensionLog;
 
+  private boolean isArmLocked;
+
   public Arm() {
     armRotatorMain = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR_MASTER);
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
@@ -99,10 +101,12 @@ public class Arm extends SubsystemBase {
 
   public void armLockOn() {
     armLock.set(true);
+    isArmLocked = true;
   }
 
   public void armLockOff(){
     armLock.set(false);
+    isArmLocked = false;
   }
 
    public double getArmExtensionPosition() {
@@ -122,7 +126,7 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm Position", getArmDegrees());
     SmartDashboard.putNumber("Arm Length", getArmExtensionPosition());
     SmartDashboard.putNumber("Raw Rotator Pulses", armRotatorMain.getSelectedSensorPosition());
-
+    SmartDashboard.putBoolean("Arm Locked?", isArmLocked);
   }
 
   
