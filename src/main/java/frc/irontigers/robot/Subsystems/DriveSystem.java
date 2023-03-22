@@ -205,7 +205,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     if (DriverStation.isAutonomous()) {
       setStandard();
     } else {
-      setInverted();
+      setStandard();
     }
 
     Pose2d pos = getRobotPosition();
