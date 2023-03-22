@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.irontigers.robot.Constants;
@@ -28,6 +30,8 @@ public class Arm extends SubsystemBase {
   private WPI_TalonFX armExtender;
   private WPI_TalonFX armRotatorSub;
 
+  private Solenoid armLock;
+
   private double armRotationPosition;
   private Pose2d armExtensionPosition;
 
@@ -39,6 +43,8 @@ public class Arm extends SubsystemBase {
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
 
     armRotatorSub = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR_SUB);
+
+    armLock = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
 
     armRotatorSub.follow(armRotatorMain);
     armRotatorSub.setInverted(true);
@@ -91,7 +97,13 @@ public class Arm extends SubsystemBase {
     return position;
   }
 
+  public void armLockOn() {
+    armLock.set(true);
+  }
 
+  public void armLockOff(){
+    armLock.set(false);
+  }
 
    public double getArmExtensionPosition() {
     double extensionPosition = armExtender.getSelectedSensorPosition() * Constants.ArmVals.EXTENDER_CONVERSION_FACTOR;

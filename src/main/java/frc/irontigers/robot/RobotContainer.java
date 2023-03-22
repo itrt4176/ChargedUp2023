@@ -88,7 +88,7 @@ public class RobotContainer {
   private final Trigger armSetLowPole = mainController.povUp();
   private final Trigger armSetTopPole = mainController.povRight();
   
-  
+  private final Trigger armLock = rightJoystick.button(8);
 
   private final Trigger halfExtend = mainController.a();
   private final Trigger fullRetract = mainController.b();
@@ -159,6 +159,8 @@ public class RobotContainer {
     // ));
 
     toggleClaw.toggleOnTrue(new StartEndCommand(claw::open, claw::close));
+
+    armLock.toggleOnTrue(new StartEndCommand(arm ::armLockOn, arm :: armLockOff));
 
     fullRetract.onTrue(autoFullRetract);
     halfExtend.onTrue(autoHalfExtend);
