@@ -117,10 +117,10 @@ public class RobotContainer {
     driveSystem.setDefaultCommand(commandJoystickDrive);
     // mainController.setDeadzone(.2);
     // driveSystem.setDefaultCommand(joystickDrive);
-    arm.setDefaultCommand(new ParallelCommandGroup(
-      armLengthAdjustment,
-      armRotation
-    ));
+    // arm.setDefaultCommand(new ParallelCommandGroup(
+    //   armLengthAdjustment,
+    //   armRotation
+    // ));
     //Maybe adjust once arm rotation is coded.
   }
 
@@ -134,7 +134,7 @@ public class RobotContainer {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
 
-    intakeIn.onTrue(new InstantCommand(() -> intake.setIntakeSpeed(-0.15)));
+    intakeIn.onTrue(new InstantCommand(() -> intake.setIntakeSpeed(-0.075)));
     intakeIn.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
     intakeOut.onTrue(new InstantCommand(() -> intake.setIntakeSpeed(0.15)));
