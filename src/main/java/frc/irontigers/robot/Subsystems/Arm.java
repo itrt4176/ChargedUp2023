@@ -75,7 +75,7 @@ public class Arm extends SubsystemBase {
   
      
   public void setRotationSpeed(double speed) {
-     armRotatorMain.set(speed * 80/200);
+     armRotatorMain.set(speed * 80.0 / 200.0);
   }
 
   public boolean isLimitSwitchPressed(){
