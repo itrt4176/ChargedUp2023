@@ -34,17 +34,19 @@ public class SmartIntakeControl extends CommandBase {
     // velocityDebouncer = new Debouncer(0.1);
 
     
-    SmartDashboard.putBoolean("SmartIntakeEnded", false);
+    SmartDashboard.putBoolean("Intake Spinning", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    SmartDashboard.putBoolean("Intake Spinning", true);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putBoolean("SmartIntakeEnded", true);
+    SmartDashboard.putBoolean("Intake Spinning", false);
     intake.setIntakeSpeed(0.0);
   }
 
