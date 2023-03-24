@@ -46,7 +46,7 @@ public final class Constants {
         public final static int ARM_EXTENDER = 16;
         public final static int ARM_ROTATOR_SUB = 17;
         public final static double PULSES_TO_EXTENSION_METERS = 0;
-        public final static double PULSES_TO_DEGREES = 1 / 2048.0 / 80 * 360;
+        public final static double PULSES_TO_DEGREES = 1.0 / 2048.0 / 80.0 * 360.0;
         public final static int ARM_EXTENDER_UPPER_LIMIT = -137795; //negative velocity extends motor; upper limit has to be lower than lower limit
         public final static int ARM_EXTENDER_LOWER_LIMIT = -12000;
         public final static double EXTENDER_CONVERSION_FACTOR = 20.9375 / 132067.0;
