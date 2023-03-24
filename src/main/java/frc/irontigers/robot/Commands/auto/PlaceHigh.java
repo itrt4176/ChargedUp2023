@@ -22,7 +22,7 @@ public class PlaceHigh extends ParallelCommandGroup {
     addCommands(
         new MoveArmToAngle(arm, 195),
         new SequentialCommandGroup(
-            new WaitUntilCommand(() -> arm.getArmDegrees() >= 118.5),
+            new WaitUntilCommand(() -> arm.getArmDegrees() >= 110.0),
             new AutoArmExtend(arm, 23.6))
     );
   }
