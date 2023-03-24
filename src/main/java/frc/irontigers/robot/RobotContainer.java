@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -26,6 +27,7 @@ import frc.irontigers.robot.Commands.ArmManualLengthAdjustment;
 import frc.irontigers.robot.Commands.AutoArmExtend;
 import frc.irontigers.robot.Commands.AutoBalance;
 import frc.irontigers.robot.Commands.MoveArmToAngle;
+import frc.irontigers.robot.Commands.SmartIntakeControl;
 import frc.irontigers.robot.Commands.auto.AutoBuilder;
 import frc.irontigers.robot.Commands.auto.ConeToChargeStation;
 import frc.irontigers.robot.Commands.auto.FollowTrajectory;
@@ -84,6 +86,12 @@ public class RobotContainer {
   private final AutoArmExtend autoHalfExtend = new AutoArmExtend(arm, 11);
   private final AutoArmExtend autoFullRetract = new AutoArmExtend(arm, 0);
 
+  private final Command intakeControl = new RepeatCommand(new SmartIntakeControl(intake)
+    .andThen(new WaitUntilCommand(() -> {
+        return intake.getCombinedRPM() >= 45.0;
+      })
+  ));
+
   private final Trigger armHomingButton = mainController.povLeft();
   private final Trigger armSetLowPole = mainController.povUp();
   private final Trigger armSetTopPole = mainController.povRight();
@@ -115,6 +123,7 @@ public class RobotContainer {
     // Configure the button binding.
     configureButtonBindings();
     driveSystem.setDefaultCommand(commandJoystickDrive);
+    intake.setDefaultCommand(intakeControl);
     // mainController.setDeadzone(.2);
     // driveSystem.setDefaultCommand(joystickDrive);
     // arm.setDefaultCommand(new ParallelCommandGroup(
@@ -134,11 +143,16 @@ public class RobotContainer {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
 
-    intakeIn.onTrue(new InstantCommand(() -> intake.setIntakeSpeed(-0.075)));
-    intakeIn.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
+    intakeIn.onTrue(intakeControl);
+    // intakeIn.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
-    intakeOut.onTrue(new InstantCommand(() -> intake.setIntakeSpeed(0.15)));
-    intakeOut.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
+    intakeOut.whileTrue(new StartEndCommand(
+        () -> intake.setIntakeSpeed(0.125),
+        () -> intake.setIntakeSpeed(0.0),
+        intake
+    ));
+    intakeOut.onFalse(intakeControl);
+    // intakeOut.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
     armRotateUp.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.7)));
     armRotateUp.onFalse(new InstantCommand(() -> arm.setRotationSpeed(0.0)));
