@@ -84,6 +84,7 @@ public class AutoBuilder {
     }
 
     public Command getAutonomousCommand() {
+        // return new InstantCommand(() -> drive.voltageDrive(4.0, 4.0), drive);
         StartPosition selectedStart = (startChooser.getSelected() != null) ? StartPosition.valueOf(startChooser.getSelected()) : null;
         EndPosition selectedEnd = (endChooser.getSelected() != null) ? EndPosition.valueOf(endChooser.getSelected()) : null;
 
@@ -158,9 +159,9 @@ public class AutoBuilder {
     }
 
     private enum EndPosition {
-        CHARGE_STATION("Charge Station", "_CS", new PathConstraints(2.75, 1.5)),
-        LINE_LOAD("Cross Line (Loading Side)", "_L_Load", new PathConstraints(3.0, 2.0)),
-        LINE_TABLE("Cross Line (Staging Side)", "_L_Table", new PathConstraints(3.0, 2.0));
+        CHARGE_STATION("Charge Station", "_CS", new PathConstraints(2.75, 1.0)),
+        LINE_LOAD("Cross Line (Loading Side)", "_L_Load", new PathConstraints(3.0, 1.0)),
+        LINE_TABLE("Cross Line (Staging Side)", "_L_Table", new PathConstraints(3.0, 1.0));
 
         private final String repr;
         private final String pathSuffix;

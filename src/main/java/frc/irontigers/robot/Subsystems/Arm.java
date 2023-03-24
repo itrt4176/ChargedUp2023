@@ -111,6 +111,10 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm Length", getArmExtensionPosition());
     SmartDashboard.putNumber("Raw Rotator Pulses", armRotatorMain.getSelectedSensorPosition());
 
+    SmartDashboard.putBoolean("Arm 0", getArmDegrees() >= -2.5 && getArmDegrees() <= 2.5);
+    SmartDashboard.putBoolean("Arm High", getArmDegrees() >= 177.5 && getArmDegrees() <= 182.5);
+    SmartDashboard.putBoolean("Arm Mid", getArmDegrees() >= 187.5 && getArmDegrees() <= 192.5);
+
   }
 
   

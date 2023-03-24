@@ -34,7 +34,7 @@ public class FollowTrajectory extends SequentialCommandGroup {
             new PIDController(LEFT_P, LEFT_I, LEFT_D),
             new PIDController(RIGHT_P, RIGHT_I, RIGHT_D),
             driveSys::voltageDrive,
-            true,
+            false,
             driveSys),
         new InstantCommand(() -> driveSys.voltageDrive(0, 0)));
   }

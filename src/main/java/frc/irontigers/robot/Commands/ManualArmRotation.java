@@ -28,7 +28,8 @@ public class ManualArmRotation extends CommandBase {
   public void execute() {
     double speed = controller.getRightY();
     if (arm.getArmDegrees() <= 0 && speed < 0){
-      arm.setRotationSpeed(0);
+      // arm.setRotationSpeed(0);
+      arm.setRotationSpeed( .55 * speed);
     }else{
       arm.setRotationSpeed( .55 * speed);
     }
