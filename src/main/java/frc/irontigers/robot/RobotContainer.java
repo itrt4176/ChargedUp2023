@@ -88,7 +88,7 @@ public class RobotContainer {
 
   private final Command intakeControl = new RepeatCommand(new SmartIntakeControl(intake)
     .andThen(new WaitUntilCommand(() -> {
-        return intake.getCombinedRPM() >= 50.0;
+        return intake.getCombinedRPM() >= 47.5;
       })
   ));
 
