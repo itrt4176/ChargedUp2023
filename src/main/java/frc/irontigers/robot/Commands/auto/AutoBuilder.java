@@ -95,7 +95,7 @@ public class AutoBuilder {
         pathBuilder.append(selectedStart.getPathPrefix());
         pathBuilder.append(selectedEnd.getPathSuffix());
 
-        PathPlannerTrajectory trajectory = PathPlanner.loadPath(pathBuilder.toString(), selectedEnd.getPathConstraints(), false);
+        PathPlannerTrajectory trajectory = PathPlanner.loadPath(pathBuilder.toString(), selectedEnd.getPathConstraints(), true);
 
         if (placePiece.getBoolean(false)) {
             return new SequentialCommandGroup(
