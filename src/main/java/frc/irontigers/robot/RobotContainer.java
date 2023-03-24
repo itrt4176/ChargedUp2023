@@ -9,6 +9,7 @@ import java.time.Instant;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -113,6 +114,8 @@ public class RobotContainer {
   private final Trigger intakeIn = rightJoystick.button(2);
   private final Trigger intakeOut = rightJoystick.button(3);
 
+  private final Trigger deployTeleop = new Trigger(DriverStation::isTeleopEnabled);
+
   private final SendableChooser<Command> autoPath = new SendableChooser<>();
 
   private final AutoBuilder autoBuilder = new AutoBuilder(driveSystem, arm, claw);
@@ -148,7 +151,7 @@ public class RobotContainer {
     // intakeIn.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
     intakeOut.whileTrue(new StartEndCommand(
-        () -> intake.setIntakeSpeed(0.125),
+        () -> intake.setIntakeSpeed(0.11),
         () -> intake.setIntakeSpeed(0.0),
         intake
     ));
@@ -179,7 +182,8 @@ public class RobotContainer {
 
     toggleClaw.toggleOnTrue(new StartEndCommand(claw::open, claw::close));
 
-    armLock.toggleOnTrue(new StartEndCommand(arm ::armLockOn, arm :: armLockOff));
+    deployTeleop.onTrue(new InstantCommand(arm::armLockOn));
+    armLock.toggleOnTrue(new StartEndCommand(arm::armLockOn, arm::armLockOff));
 
     fullRetract.onTrue(autoFullRetract);
     halfExtend.onTrue(autoHalfExtend);

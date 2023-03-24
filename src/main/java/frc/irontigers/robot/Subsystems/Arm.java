@@ -100,11 +100,15 @@ public class Arm extends SubsystemBase {
   }
 
   public void armLockOn() {
+    armRotatorMain.setNeutralMode(NeutralMode.Coast);
+    armRotatorSub.setNeutralMode(NeutralMode.Coast);
     armLock.set(true);
     isArmLocked = true;
   }
 
-  public void armLockOff(){
+  public void armLockOff() {
+    armRotatorMain.setNeutralMode(NeutralMode.Brake);
+    armRotatorSub.setNeutralMode(NeutralMode.Brake);
     armLock.set(false);
     isArmLocked = false;
   }
