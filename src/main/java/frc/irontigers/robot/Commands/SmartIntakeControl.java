@@ -51,6 +51,6 @@ public class SmartIntakeControl extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.getCombinedRPM() > -10 && intake.getCombinedSupplyCurrent() > 0.5;
+    return intake.getCombinedRPM() > -10 && intake.getCombinedSupplyCurrent() > 0.55;
   }
 }
