@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.irontigers.robot.Constants;
@@ -28,17 +30,23 @@ public class Arm extends SubsystemBase {
   private WPI_TalonFX armExtender;
   private WPI_TalonFX armRotatorSub;
 
+  private Solenoid armLock;
+
   private double armRotationPosition;
   private Pose2d armExtensionPosition;
 
   private DoubleLogEntry armPositionLog;
   private DoubleLogEntry armExtensionLog;
 
+  private boolean isArmLocked;
+
   public Arm() {
     armRotatorMain = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR_MASTER);
     armExtender = new WPI_TalonFX(Constants.ArmVals.ARM_EXTENDER);
 
     armRotatorSub = new WPI_TalonFX(Constants.ArmVals.ARM_ROTATOR_SUB);
+
+    armLock = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
 
     armRotatorSub.follow(armRotatorMain);
     armRotatorSub.setInverted(true);
@@ -67,7 +75,7 @@ public class Arm extends SubsystemBase {
   
      
   public void setRotationSpeed(double speed) {
-     armRotatorMain.set(speed);
+     armRotatorMain.set(speed * 80.0 / 200.0);
   }
 
   public boolean isLimitSwitchPressed(){
@@ -91,7 +99,19 @@ public class Arm extends SubsystemBase {
     return position;
   }
 
+  public void armLockOn() {
+    armRotatorMain.setNeutralMode(NeutralMode.Coast);
+    armRotatorSub.setNeutralMode(NeutralMode.Coast);
+    armLock.set(true);
+    isArmLocked = true;
+  }
 
+  public void armLockOff() {
+    armRotatorMain.setNeutralMode(NeutralMode.Brake);
+    armRotatorSub.setNeutralMode(NeutralMode.Brake);
+    armLock.set(false);
+    isArmLocked = false;
+  }
 
    public double getArmExtensionPosition() {
     double extensionPosition = armExtender.getSelectedSensorPosition() * Constants.ArmVals.EXTENDER_CONVERSION_FACTOR;
@@ -110,7 +130,7 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm Position", getArmDegrees());
     SmartDashboard.putNumber("Arm Length", getArmExtensionPosition());
     SmartDashboard.putNumber("Raw Rotator Pulses", armRotatorMain.getSelectedSensorPosition());
-
+    SmartDashboard.putBoolean("Arm Locked?", isArmLocked);
     SmartDashboard.putBoolean("Arm 0", getArmDegrees() >= -2.5 && getArmDegrees() <= 2.5);
     SmartDashboard.putBoolean("Arm High", getArmDegrees() >= 177.5 && getArmDegrees() <= 182.5);
     SmartDashboard.putBoolean("Arm Mid", getArmDegrees() >= 187.5 && getArmDegrees() <= 192.5);

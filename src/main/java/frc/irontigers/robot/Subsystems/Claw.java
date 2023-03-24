@@ -4,6 +4,7 @@
 
 package frc.irontigers.robot.Subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -20,13 +21,11 @@ public class Claw extends SubsystemBase {
   private WPI_TalonFX claw;
   private Solenoid clawPnuematic;
 
-
   private DoubleLogEntry clawPositionLog;
   
 
   public Claw() {
     // claw = new WPI_TalonFX(Constants.ClawVals.CLAW);
-    
     clawPnuematic = new Solenoid(PneumaticsModuleType.CTREPCM , 0);
 
     DataLog log = DataLogManager.getLog();{
@@ -48,9 +47,6 @@ public class Claw extends SubsystemBase {
   public void close() {
     clawPnuematic.set(false);
   }
-  
-
- 
 
   // public double[] getClawPositions() {
   //   double[] clawPositions = {claw.getSelectedSensorPosition()};

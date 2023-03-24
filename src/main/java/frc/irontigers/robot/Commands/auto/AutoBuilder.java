@@ -120,13 +120,14 @@ public class AutoBuilder {
 
     private enum StartPosition {
         NODE_1("Nodes 1", "B1", List.of(EndPosition.LINE_TABLE)),
-        NODE_2("Nodes 2", "B2", List.of(EndPosition.LINE_TABLE)),
-        NODE_3("Nodes 3", "B3", List.of(EndPosition.LINE_TABLE)),
-        NODE_4("Nodes 4", "B4", List.of(EndPosition.CHARGE_STATION, EndPosition.LINE_TABLE)),
-        NODE_5("Nodes 5", "B5", List.of(EndPosition.CHARGE_STATION, EndPosition.LINE_LOAD, EndPosition.LINE_TABLE)),
-        NODE_6("Nodes 6", "B6", List.of(EndPosition.CHARGE_STATION, EndPosition.LINE_LOAD)),
-        NODE_7("Nodes 7", "B7", List.of(EndPosition.LINE_LOAD)),
-        NODE_8("Nodes 8", "B8", List.of(EndPosition.LINE_TABLE));
+        // NODE_2("Nodes 2", "B2", List.of(EndPosition.LINE_TABLE)),
+        // NODE_3("Nodes 3", "B3", List.of(EndPosition.LINE_TABLE)),
+        NODE_4("Nodes 4", "B4", List.of(EndPosition.CHARGE_STATION)),// EndPosition.LINE_TABLE)),
+        NODE_5("Nodes 5", "B5", List.of(EndPosition.CHARGE_STATION)),// EndPosition.LINE_LOAD, EndPosition.LINE_TABLE)),
+        NODE_6("Nodes 6", "B6", List.of(EndPosition.CHARGE_STATION)),// EndPosition.LINE_LOAD)),
+        // NODE_7("Nodes 7", "B7", List.of(EndPosition.LINE_LOAD)),
+        // NODE_8("Nodes 8", "B8", List.of(EndPosition.LINE_TABLE))
+        NODE_9("Nodes 9", "B9", List.of(EndPosition.LINE_LOAD));
 
         private final String repr;
         private final String pathPrefix;
