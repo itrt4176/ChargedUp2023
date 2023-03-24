@@ -55,6 +55,7 @@ import frc.irontigers.robot.Subsystems.Arm.*;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
   // The robot's subsystems and commands are defined here..
 
   private final XboxControllerIT mainController = new XboxControllerIT(0);
@@ -167,6 +168,10 @@ public class RobotContainer {
 
     // armHomingButton.onTrue(homeArm);
 
+    // armSetLowPole.onTrue(new SequentialCommandGroup(
+    //   new AutoArmExtend(arm, 0),
+    //   new MoveArmToAngle(arm, 190)
+    // ));
     // armSetLowPole.onTrue(new SequentialCommandGroup(
     //   new AutoArmExtend(arm, 0),
     //   new MoveArmToAngle(arm, 190)
