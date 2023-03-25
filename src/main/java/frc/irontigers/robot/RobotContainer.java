@@ -60,7 +60,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here..
 
   private final XboxControllerIT mainController = new XboxControllerIT(0);
-  private final CommandJoystick driveJoystick = new CommandJoystick(2);
+  private final CommandJoystick forwardJoystick = new CommandJoystick(2);
   private final CommandJoystick turningJoystick = new CommandJoystick(1);
   // private final XboxControllerIT clawController = new XboxControllerIT(1);
   
@@ -70,7 +70,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
 
   private final DifferentialJoystickDrive joystickDrive = new DifferentialJoystickDrive(driveSystem, mainController);
-  private final CommandJoystickDrive commandJoystickDrive = new CommandJoystickDrive(driveSystem, driveJoystick, turningJoystick);
+  private final CommandJoystickDrive commandJoystickDrive = new CommandJoystickDrive(driveSystem, forwardJoystick, turningJoystick);
 
   private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController /*rightJoystick*/);
 
@@ -101,7 +101,7 @@ public class RobotContainer {
   private final Trigger armLock = turningJoystick.button(8);
 
   private final Trigger armRetractButton = turningJoystick.trigger();
-  private final Trigger armExtendButton = driveJoystick.trigger();
+  private final Trigger armExtendButton = forwardJoystick.trigger();
 
   private final Trigger halfExtend = mainController.a();
   private final Trigger fullRetract = mainController.b();
@@ -112,12 +112,12 @@ public class RobotContainer {
   private final Trigger gearShiftDown = mainController.leftBumper();
 
   private final Trigger armRotateUp = turningJoystick.button(5);
-  private final Trigger armRotateDown = driveJoystick.button(4);
+  private final Trigger armRotateDown = forwardJoystick.button(4);
 
   private final Trigger intakeIn = turningJoystick.button(2);
   private final Trigger intakeOut = turningJoystick.button(3);
 
-  private final Trigger clawToggle = driveJoystick.button(3);
+  private final Trigger clawToggle = forwardJoystick.button(3);
 
   private final Trigger deployTeleop = new Trigger(DriverStation::isTeleopEnabled);
 
