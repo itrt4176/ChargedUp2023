@@ -195,12 +195,11 @@ public class RobotContainer {
     fullExtend.onTrue(autoFullExtend);
 
     armExtendButton.whileTrue(new StartEndCommand(
-        () -> arm.setExtensionSpeed(0.55), 
+        () -> arm.setExtensionSpeed(-0.55), 
         () -> arm.setExtensionSpeed(0)
       ));
-
     armRetractButton.whileTrue(new StartEndCommand(
-        () -> arm.setExtensionSpeed(-0.55),
+        () -> arm.setExtensionSpeed(0.55),
         () -> arm.setExtensionSpeed(0)
       ));
 
