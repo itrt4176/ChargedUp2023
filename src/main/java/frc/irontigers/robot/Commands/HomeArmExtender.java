@@ -14,7 +14,7 @@ public class HomeArmExtender extends CommandBase {
   public HomeArmExtender(Arm arm) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.arm = arm;
-    addRequirements(arm);
+    // addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
