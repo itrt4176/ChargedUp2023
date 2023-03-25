@@ -160,7 +160,7 @@ public class RobotContainer {
         () -> intake.setIntakeSpeed(0.0),
         intake
     ));
-    intakeOut.onFalse(intakeControl);
+    //intakeOut.onFalse(intakeControl);
     // intakeOut.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
     armRotateUp.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.7)));
