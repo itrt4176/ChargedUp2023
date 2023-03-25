@@ -60,8 +60,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here..
 
   private final XboxControllerIT mainController = new XboxControllerIT(0);
-  private final CommandJoystick leftJoystick = new CommandJoystick(2);
-  private final CommandJoystick rightJoystick = new CommandJoystick(1);
+  private final CommandJoystick turningJoystick = new CommandJoystick(2);
+  private final CommandJoystick forwardJoystick = new CommandJoystick(1);
   // private final XboxControllerIT clawController = new XboxControllerIT(1);
   
   private final DriveSystem driveSystem = new DriveSystem();
@@ -70,7 +70,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
 
   private final DifferentialJoystickDrive joystickDrive = new DifferentialJoystickDrive(driveSystem, mainController);
-  private final CommandJoystickDrive commandJoystickDrive = new CommandJoystickDrive(driveSystem, leftJoystick, rightJoystick);
+  private final CommandJoystickDrive commandJoystickDrive = new CommandJoystickDrive(driveSystem, turningJoystick, forwardJoystick);
 
   private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController /*rightJoystick*/);
 
@@ -98,7 +98,10 @@ public class RobotContainer {
   private final Trigger armSetLowPole = mainController.povUp();
   private final Trigger armSetTopPole = mainController.povRight();
   
-  private final Trigger armLock = rightJoystick.button(8);
+  private final Trigger armLock = forwardJoystick.button(8);
+
+  private final Trigger armRetractButton = forwardJoystick.trigger();
+  private final Trigger armExtendButton = turningJoystick.trigger();
 
   private final Trigger halfExtend = mainController.a();
   private final Trigger fullRetract = mainController.b();
@@ -108,11 +111,11 @@ public class RobotContainer {
   private final Trigger gearShiftUp = mainController.rightBumper();
   private final Trigger gearShiftDown = mainController.leftBumper();
 
-  private final Trigger armRotateUp = rightJoystick.button(5);
-  private final Trigger armRotateDown = leftJoystick.button(4);
+  private final Trigger armRotateUp = forwardJoystick.button(5);
+  private final Trigger armRotateDown = turningJoystick.button(4);
 
-  private final Trigger intakeIn = rightJoystick.button(2);
-  private final Trigger intakeOut = rightJoystick.button(3);
+  private final Trigger intakeIn = forwardJoystick.button(2);
+  private final Trigger intakeOut = forwardJoystick.button(3);
 
   private final Trigger deployTeleop = new Trigger(DriverStation::isTeleopEnabled);
 
@@ -188,6 +191,16 @@ public class RobotContainer {
     fullRetract.onTrue(autoFullRetract);
     halfExtend.onTrue(autoHalfExtend);
     fullExtend.onTrue(autoFullExtend);
+
+    armExtendButton.whileTrue(new StartEndCommand(
+        () -> arm.setExtensionSpeed(0.55), 
+        () -> arm.setExtensionSpeed(0)
+      ));
+
+    armRetractButton.whileTrue(new StartEndCommand(
+        () -> arm.setExtensionSpeed(-0.55),
+        () -> arm.setExtensionSpeed(0)
+      ));
 
     
   }
