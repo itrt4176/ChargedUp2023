@@ -76,9 +76,9 @@ public class AutoBalance extends CommandBase {
     // }
 
     if (angle > 0) {
-      return -MathUtil.clamp((0.136 * angle) + 0.06, 0.115, 0.38);
+      return -MathUtil.clamp((0.136 * angle) + 0.06, 0.115, 0.4);
     } else {
-      return -MathUtil.clamp((0.136 * angle) - 0.06, -0.38, -0.115);
+      return -MathUtil.clamp((0.136 * angle) - 0.06, -0.4, -0.115);
     }
   }
 }
