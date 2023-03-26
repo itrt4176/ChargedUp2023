@@ -13,24 +13,34 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxRelativeEncoder.Type;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.datalog.IntegerLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.irontigers.robot.Constants.DriveVals.*;
 
+import org.yaml.snakeyaml.scanner.Constant;
+
+import frc.irontigers.robot.Constants;
 import frc.irontigers.robot.Commands.CommandJoystickDrive;
 import frc.tigerlib.subsystem.drive.DifferentialDriveSubsystem;
 
@@ -48,6 +58,11 @@ public class DriveSystem extends DifferentialDriveSubsystem {
 
   private RelativeEncoder rightOneEncoder = rightOne.getEncoder();
 
+  private EncoderSim leftEncoderSim = new EncoderSim((Encoder) leftOneEncoder);
+  private EncoderSim rightEncoderSim = new EncoderSim((Encoder) rightOneEncoder);
+
+  private DifferentialDrivetrainSim driveSim;
+
   private int gear = 2;
   private double gearScalar;
 
@@ -63,7 +78,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
 
   private DifferentialDriveKinematics kinematics;
 
-  // private Field2d field;
+  //private Field2d field;
 
   /** Creates a new DriveSystem. */
   public DriveSystem() {
@@ -104,9 +119,17 @@ public class DriveSystem extends DifferentialDriveSubsystem {
 
     resetEncoders();
 
+    driveSim = new DifferentialDrivetrainSim(
+      LinearSystemId.identifyDrivetrainSystem(Constants.DriveVals.V, Constants.DriveVals.A, 3.4766, 0.43912),
+      DCMotor.getNEO(2),
+      1/5.95,
+      Constants.DriveVals.TRACK_WIDTH,
+      Units.inchesToMeters(2.901),
+      null);
+
     kinematics = new DifferentialDriveKinematics(TRACK_WIDTH);
 
-    // field = new Field2d();
+    //field = new Field2d();
     SmartDashboard.putData("Field", gameField);
 
     log = DataLogManager.getLog();
@@ -117,7 +140,16 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     odoRotationLog = new DoubleLogEntry(log, "drive/odometer/rotation");
   }
 
-  
+  public void simulationPeriodic() {
+    driveSim.setInputs(leftOne.get() * RobotController.getInputVoltage(), -rightOne.get() * RobotController.getInputVoltage()); //figure out of right side is inverted
+
+    driveSim.update(0.02);
+
+    leftEncoderSim.setDistance(driveSim.getLeftPositionMeters() / Constants.DriveVals.ROTATIONS_TO_METERS); // Meters to rotations
+    leftEncoderSim.setRate(driveSim.getLeftVelocityMetersPerSecond() / Constants.DriveVals.ROTATIONS_TO_METERS);
+    rightEncoderSim.setDistance(driveSim.getRightPositionMeters() / Constants.DriveVals.ROTATIONS_TO_METERS);
+    rightEncoderSim.setRate(driveSim.getRightVelocityMetersPerSecond() / Constants.DriveVals.ROTATIONS_TO_METERS);
+  };
 
   public void setGear(int gear) {
     this.gear = MathUtil.clamp(gear, 0, 3);
@@ -210,10 +242,13 @@ public class DriveSystem extends DifferentialDriveSubsystem {
       setStandard();
     }
 
+    odometer.update(null, leftEncoderSim.getDistance(), rightEncoderSim.getDistance());
+    gameField.setRobotPose(odometer.getPoseMeters());
+
     Pose2d pos = getRobotPosition();
     odoxLog.append(pos.getX());
     odoRotationLog.append(pos.getRotation().getDegrees());
-    gameField.setRobotPose(pos);
+    //gameField.setRobotPose(pos);
 
     SmartDashboard.putNumber("Robot X", getRobotPosition().getX());
     SmartDashboard.putNumber("Left", getLeftDistance());
