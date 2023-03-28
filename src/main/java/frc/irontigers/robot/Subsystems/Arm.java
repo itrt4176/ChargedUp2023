@@ -78,7 +78,7 @@ public class Arm extends SubsystemBase {
      armRotatorMain.set(speed * 80.0 / 200.0);
   }
 
-  public boolean isLimitSwitchPressed(){
+  public boolean isRotatorHome() {
     return armRotatorMain.getSensorCollection().isRevLimitSwitchClosed() == 1; 
   }
 
@@ -113,11 +113,15 @@ public class Arm extends SubsystemBase {
     isArmLocked = false;
   }
 
-   public double getArmExtensionPosition() {
+  public double getArmExtensionPosition() {
     double extensionPosition = armExtender.getSelectedSensorPosition() * Constants.ArmVals.EXTENDER_CONVERSION_FACTOR;
     armExtensionLog.append(extensionPosition);
-    
+
     return extensionPosition;
+  }
+
+  public boolean isExtensionHome() {
+    return armExtender.getSensorCollection().isRevLimitSwitchClosed() == 1;
   }
 
 

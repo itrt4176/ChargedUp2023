@@ -1,0 +1,90 @@
+<dashboard-tab
+    tab-name="Driver"
+    slot="tab"
+    source-provider="NetworkTables"
+    selected=""
+>
+    <frc-label
+        text="Auto Config"
+        source-provider="NetworkTables"
+        style="transform: translate(18px, 15px); width: 85.6094px; height: 23px;"
+    ></frc-label>
+    <frc-toggle-switch
+        source-provider="NetworkTables"
+        source-key="/Shuffleboard/Auto/Config/Place Game Piece"
+        style="transform: translate(193px, 46px); width: 60px; height: 26px;"
+    ></frc-toggle-switch>
+    <frc-label
+        text="Place Game Piece"
+        source-provider="NetworkTables"
+        style="transform: translate(25px, 50px);"
+    ></frc-label>
+    <frc-sendable-chooser
+        source-key="/Shuffleboard/Auto/Config/End Position"
+        source-provider="NetworkTables"
+        style="transform: translate(20px, 164px); width: 260px; height: 77px;"
+        options="[]"
+        selected="Cross Line (Staging Side)"
+        label="End Position"
+    ></frc-sendable-chooser>
+    <frc-camera
+        source-provider="NetworkTables"
+        style="--image-width:828px; --image-height:621px; --crosshair-width:3px; --crosshair-color:#ffffff; --image-display:block; transform: translate(720px, 25px); width: 830px; height: 621px;"
+        source-key="/CameraPublisher/photonvision_Port_1182_MJPEG_Server"
+        crosshair-width="3"
+        streams="[]"
+    ></frc-camera>
+    <frc-boolean-box
+        source-provider="NetworkTables"
+        style="transform: translate(1600px, 21px); width: 278px; height: 259px;"
+        source-key="/SmartDashboard/Intake Spinning"
+        label="INTAKE"
+    ></frc-boolean-box>
+    <frc-boolean-box
+        source-provider="NetworkTables"
+        style="transform: translate(1600px, 360px); width: 280px; height: 280px;"
+        source-key="/SmartDashboard/Arm Locked?"
+        label="ARM LOCK"
+    ></frc-boolean-box>
+    <frc-sendable-chooser
+        source-key="/Shuffleboard/Auto/Config/Start Position"
+        source-provider="NetworkTables"
+        style="transform: translate(19px, 84px); width: 263px; height: 77px;"
+        options="[]"
+        label="Start Position"
+    ></frc-sendable-chooser>
+    <frc-field
+        source-key="/SmartDashboard/Field"
+        source-provider="NetworkTables"
+        style="transform: translate(17px, 303px); width: 663px; height: 344px;"
+        width="54.27083"
+        height="26.2916"
+        image="/field-images/2023-field.jpg"
+        top-left-field-corner-x="46"
+        top-left-field-corner-y="36"
+        bottom-right-field-corner-x="1088"
+        bottom-right-field-corner-y="544"
+    >
+        <frc-field-robot
+            source-key="/SmartDashboard/Field/Robot"
+            source-provider="NetworkTables"
+            style="width: 31.6727px; height: 35.7239px; transform: translate(11.1431px, 298.322px) rotate(90.67deg);"
+            width="0.86"
+            height="0.97"
+            opacity="100"
+            pose="[0,0,0]"
+        ></frc-field-robot>
+    </frc-field>
+    <frc-basic-fms-info
+        source-provider="NetworkTables"
+        style="transform: translate(308px, 160px); width: 370px; height: 120px;"
+        source-key="/FMSInfo"
+    ></frc-basic-fms-info>
+    <frc-gauge
+        source-provider="NetworkTables"
+        style="transform: translate(321px, 29px); width: 360px; height: 133px;"
+        source-key="/SmartDashboard/Roll"
+        min="-90"
+        max="90"
+    ></frc-gauge>
+</dashboard-tab>

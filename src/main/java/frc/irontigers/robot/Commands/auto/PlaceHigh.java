@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.irontigers.robot.Commands.AutoArmExtend;
+import frc.irontigers.robot.Commands.HomeArmExtender;
 import frc.irontigers.robot.Commands.MoveArmToAngle;
 import frc.irontigers.robot.Subsystems.Arm;
 
@@ -22,6 +23,7 @@ public class PlaceHigh extends ParallelCommandGroup {
     addCommands(
         new MoveArmToAngle(arm, 195),
         new SequentialCommandGroup(
+            new HomeArmExtender(arm).withTimeout(0.5),
             new WaitUntilCommand(() -> arm.getArmDegrees() >= 110.0),
             new AutoArmExtend(arm, 23.6))
     );
