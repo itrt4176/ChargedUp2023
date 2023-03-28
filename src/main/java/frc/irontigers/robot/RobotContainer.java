@@ -60,8 +60,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here..
 
   private final XboxControllerIT mainController = new XboxControllerIT(0);
-  private final CommandJoystick leftJoystick = new CommandJoystick(2);
-  private final CommandJoystick rightJoystick = new CommandJoystick(1);
+  private final CommandJoystick forwardJoystick = new CommandJoystick(2);
+  private final CommandJoystick turningJoystick = new CommandJoystick(1);
   // private final XboxControllerIT clawController = new XboxControllerIT(1);
   
   private final DriveSystem driveSystem = new DriveSystem();
@@ -70,7 +70,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
 
   private final DifferentialJoystickDrive joystickDrive = new DifferentialJoystickDrive(driveSystem, mainController);
-  private final CommandJoystickDrive commandJoystickDrive = new CommandJoystickDrive(driveSystem, leftJoystick, rightJoystick);
+  private final CommandJoystickDrive commandJoystickDrive = new CommandJoystickDrive(driveSystem, forwardJoystick, turningJoystick);
 
   private final ManualArmRotation armRotation = new ManualArmRotation(arm, mainController /*rightJoystick*/);
 
@@ -98,7 +98,10 @@ public class RobotContainer {
   private final Trigger armSetLowPole = mainController.povUp();
   private final Trigger armSetTopPole = mainController.povRight();
   
-  private final Trigger armLock = rightJoystick.button(8);
+  private final Trigger armLock = forwardJoystick.button(2);
+
+  private final Trigger armRetractButton = turningJoystick.trigger();
+  private final Trigger armExtendButton = forwardJoystick.trigger();
 
   private final Trigger halfExtend = mainController.a();
   private final Trigger fullRetract = mainController.b();
@@ -108,11 +111,13 @@ public class RobotContainer {
   private final Trigger gearShiftUp = mainController.rightBumper();
   private final Trigger gearShiftDown = mainController.leftBumper();
 
-  private final Trigger armRotateUp = rightJoystick.button(5);
-  private final Trigger armRotateDown = leftJoystick.button(4);
+  private final Trigger armRotateUp = turningJoystick.button(5);
+  private final Trigger armRotateDown = forwardJoystick.button(4);
 
-  private final Trigger intakeIn = rightJoystick.button(2);
-  private final Trigger intakeOut = rightJoystick.button(3);
+  // private final Trigger intakeIn = turningJoystick.button(2);
+  private final Trigger intakeOut = turningJoystick.button(3);
+
+  private final Trigger clawToggle = forwardJoystick.button(3);
 
   private final Trigger deployTeleop = new Trigger(DriverStation::isTeleopEnabled);
 
@@ -127,7 +132,7 @@ public class RobotContainer {
     // Configure the button binding.
     configureButtonBindings();
     driveSystem.setDefaultCommand(commandJoystickDrive);
-    intake.setDefaultCommand(intakeControl);
+    intake.setDefaultCommand(new InstantCommand(() -> intake.setIntakeSpeed(-0.125), intake));
     // mainController.setDeadzone(.2);
     // driveSystem.setDefaultCommand(joystickDrive);
     // arm.setDefaultCommand(new ParallelCommandGroup(
@@ -147,7 +152,7 @@ public class RobotContainer {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
 
-    intakeIn.onTrue(intakeControl);
+    //intakeIn.onTrue(intakeControl);
     // intakeIn.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
     intakeOut.whileTrue(new StartEndCommand(
@@ -155,7 +160,7 @@ public class RobotContainer {
         () -> intake.setIntakeSpeed(0.0),
         intake
     ));
-    intakeOut.onFalse(intakeControl);
+    //intakeOut.onFalse(intakeControl);
     // intakeOut.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
     armRotateUp.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.7)));
@@ -180,7 +185,7 @@ public class RobotContainer {
     //   new MoveArmToAngle(arm, 190)
     // ));
 
-    toggleClaw.toggleOnTrue(new StartEndCommand(claw::open, claw::close));
+    clawToggle.toggleOnTrue(new StartEndCommand(claw::open, claw::close));
 
     deployTeleop.onTrue(new InstantCommand(arm::armLockOn));
     armLock.toggleOnTrue(new StartEndCommand(arm::armLockOn, arm::armLockOff));
@@ -188,6 +193,15 @@ public class RobotContainer {
     fullRetract.onTrue(autoFullRetract);
     halfExtend.onTrue(autoHalfExtend);
     fullExtend.onTrue(autoFullExtend);
+
+    armExtendButton.whileTrue(new StartEndCommand(
+        () -> arm.setExtensionSpeed(-0.55), 
+        () -> arm.setExtensionSpeed(0)
+      ));
+    armRetractButton.whileTrue(new StartEndCommand(
+        () -> arm.setExtensionSpeed(0.55),
+        () -> arm.setExtensionSpeed(0)
+      ));
 
     
   }
