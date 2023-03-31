@@ -98,7 +98,7 @@ public class RobotContainer {
   private final Trigger armSetLowPole = mainController.povUp();
   private final Trigger armSetTopPole = mainController.povRight();
   
-  private final Trigger armLock = turningJoystick.button(8);
+  private final Trigger armLock = forwardJoystick.button(2);
 
   private final Trigger armRetractButton = turningJoystick.trigger();
   private final Trigger armExtendButton = forwardJoystick.trigger();
@@ -114,7 +114,7 @@ public class RobotContainer {
   private final Trigger armRotateUp = turningJoystick.button(5);
   private final Trigger armRotateDown = forwardJoystick.button(4);
 
-  private final Trigger intakeIn = turningJoystick.button(2);
+  // private final Trigger intakeIn = turningJoystick.button(2);
   private final Trigger intakeOut = turningJoystick.button(3);
 
   private final Trigger clawToggle = forwardJoystick.button(3);
@@ -132,7 +132,7 @@ public class RobotContainer {
     // Configure the button binding.
     configureButtonBindings();
     driveSystem.setDefaultCommand(commandJoystickDrive);
-    intake.setDefaultCommand(intakeControl);
+    intake.setDefaultCommand(new InstantCommand(() -> intake.setIntakeSpeed(-0.125), intake));
     // mainController.setDeadzone(.2);
     // driveSystem.setDefaultCommand(joystickDrive);
     // arm.setDefaultCommand(new ParallelCommandGroup(
@@ -152,7 +152,7 @@ public class RobotContainer {
     gearShiftUp.onTrue(new InstantCommand(() -> driveSystem.shiftUp()));
     gearShiftDown.onTrue(new InstantCommand(() -> driveSystem.shiftDown()));
 
-    intakeIn.onTrue(intakeControl);
+    //intakeIn.onTrue(intakeControl);
     // intakeIn.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
     intakeOut.whileTrue(new StartEndCommand(
@@ -160,7 +160,7 @@ public class RobotContainer {
         () -> intake.setIntakeSpeed(0.0),
         intake
     ));
-    intakeOut.onFalse(intakeControl);
+    //intakeOut.onFalse(intakeControl);
     // intakeOut.onFalse(new InstantCommand(() -> intake.setIntakeSpeed(0)));
 
     armRotateUp.onTrue(new InstantCommand(() -> arm.setRotationSpeed(0.7)));
