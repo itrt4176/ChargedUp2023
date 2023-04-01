@@ -7,11 +7,13 @@ package frc.irontigers.robot.Subsystems;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.EncoderType;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxRelativeEncoder.Type;
 
+import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,12 +29,14 @@ import edu.wpi.first.util.datalog.IntegerLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,17 +55,23 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   private MotorControllerGroup left = new MotorControllerGroup(leftOne, leftTwo);
 
   private RelativeEncoder leftOneEncoder = leftOne.getEncoder();
+  private SimDeviceSim leftEncoderSim;
+  private SimDouble leftEncoderPosSim;
+  private SimDouble leftEncoderVelSim;
+  private double leftInputVoltSim;
 
   private CANSparkMax rightOne = new CANSparkMax(RIGHT_ONE, MotorType.kBrushless);
   private CANSparkMax rightTwo = new CANSparkMax(RIGHT_TWO, MotorType.kBrushless);
   private MotorControllerGroup right = new MotorControllerGroup(rightOne, rightTwo);
 
   private RelativeEncoder rightOneEncoder = rightOne.getEncoder();
-
-  private EncoderSim leftEncoderSim = new EncoderSim((Encoder) leftOneEncoder);
-  private EncoderSim rightEncoderSim = new EncoderSim((Encoder) rightOneEncoder);
+  private SimDeviceSim rightEncoderSim;
+  private SimDouble rightEncoderPosSim;
+  private SimDouble rightEncoderVelSim;
+  private double rightInputVoltSim;
 
   private DifferentialDrivetrainSim driveSim;
+  private REVPhysicsSim motorSim;
 
   private int gear = 2;
   private double gearScalar;
@@ -75,6 +85,8 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   private DoubleLogEntry odoRotationLog;
 
   private AHRS gyro = new AHRS();
+  private SimDeviceSim navXSim;
+  private SimDouble yawSim;
 
   private DifferentialDriveKinematics kinematics;
 
@@ -114,18 +126,57 @@ public class DriveSystem extends DifferentialDriveSubsystem {
       e.printStackTrace();
     }
 
+    if (RobotBase.isSimulation()) {
+      driveSim = new DifferentialDrivetrainSim(
+        LinearSystemId.identifyDrivetrainSystem(Constants.DriveVals.V, Constants.DriveVals.A, 3.4766, 0.43912),
+        DCMotor.getNEO(2),
+        DifferentialDrivetrainSim.KitbotGearing.k5p95.value,
+        Constants.DriveVals.TRACK_WIDTH,
+        Units.inchesToMeters(2.901),
+        null
+      );
+
+      motorSim = REVPhysicsSim.getInstance();
+      motorSim.addSparkMax(leftOne, DCMotor.getNEO(2));
+      // motorSim.addSparkMax(leftTwo, DCMotor.getNEO(1));
+      motorSim.addSparkMax(rightOne, DCMotor.getNEO(2));
+      // motorSim.addSparkMax(rightTwo, DCMotor.getNEO(1));
+
+      leftEncoderSim = new SimDeviceSim("SPARK MAX ", LEFT_ONE);
+      leftEncoderPosSim = leftEncoderSim.getDouble("Position");
+      leftEncoderVelSim = leftEncoderSim.getDouble("Velocity");
+      leftInputVoltSim = 0.0;
+
+      rightEncoderSim = new SimDeviceSim("SPARK MAX ", RIGHT_ONE);
+      rightEncoderPosSim = rightEncoderSim.getDouble("Position");
+      rightEncoderVelSim = rightEncoderSim.getDouble("Velocity");
+      rightInputVoltSim = 0.0;
+
+      navXSim = new SimDeviceSim("navX-Sensor", 0);
+      yawSim = navXSim.getDouble("Yaw");
+    } else {
+      driveSim = null;
+
+      motorSim = null;
+
+      leftEncoderSim = null;
+      leftEncoderPosSim = null;
+      leftEncoderVelSim = null;
+      leftInputVoltSim = 0.0;
+
+      rightEncoderSim = null;
+      rightEncoderPosSim = null;
+      rightEncoderVelSim = null;
+      rightInputVoltSim = 0.0;
+
+      navXSim = null;
+      yawSim = null;
+    }
+
     setGyro(gyro);
     setMotors(left, right);
 
     resetEncoders();
-
-    driveSim = new DifferentialDrivetrainSim(
-      LinearSystemId.identifyDrivetrainSystem(Constants.DriveVals.V, Constants.DriveVals.A, 3.4766, 0.43912),
-      DCMotor.getNEO(2),
-      1/5.95,
-      Constants.DriveVals.TRACK_WIDTH,
-      Units.inchesToMeters(2.901),
-      null);
 
     kinematics = new DifferentialDriveKinematics(TRACK_WIDTH);
 
@@ -141,14 +192,18 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   }
 
   public void simulationPeriodic() {
-    driveSim.setInputs(leftOne.get() * RobotController.getInputVoltage(), -rightOne.get() * RobotController.getInputVoltage()); //figure out of right side is inverted
+    motorSim.run();
+    driveSim.setInputs(leftInputVoltSim, rightInputVoltSim); //figure out of right side is inverted
 
     driveSim.update(0.02);
 
-    leftEncoderSim.setDistance(driveSim.getLeftPositionMeters() / Constants.DriveVals.ROTATIONS_TO_METERS); // Meters to rotations
-    leftEncoderSim.setRate(driveSim.getLeftVelocityMetersPerSecond() / Constants.DriveVals.ROTATIONS_TO_METERS);
-    rightEncoderSim.setDistance(driveSim.getRightPositionMeters() / Constants.DriveVals.ROTATIONS_TO_METERS);
-    rightEncoderSim.setRate(driveSim.getRightVelocityMetersPerSecond() / Constants.DriveVals.ROTATIONS_TO_METERS);
+    leftEncoderPosSim.set(driveSim.getLeftPositionMeters() / (ROTATIONS_TO_METERS * 1.0));
+    leftEncoderVelSim.set(driveSim.getLeftVelocityMetersPerSecond() / (ROTATIONS_TO_METERS * 60.0));
+
+    rightEncoderPosSim.set(-driveSim.getRightPositionMeters() / ROTATIONS_TO_METERS);
+    rightEncoderVelSim.set(-driveSim.getRightVelocityMetersPerSecond() / (ROTATIONS_TO_METERS * 60.0));
+
+    yawSim.set(driveSim.getHeading().getDegrees());
   };
 
   public void setGear(int gear) {
@@ -182,6 +237,11 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   }
   public void twoStickDrive(double leftSpeed, double rightSpeed){
     super.drive(leftSpeed, rightSpeed);
+
+    if (RobotBase.isSimulation()) {
+      leftInputVoltSim = leftOne.get() * RobotController.getInputVoltage();
+      rightInputVoltSim = -rightOne.get() * RobotController.getInputVoltage();
+    }
     }
 
   public void shiftUp(){
@@ -214,6 +274,10 @@ public class DriveSystem extends DifferentialDriveSubsystem {
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    if (RobotBase.isSimulation()) {
+      return new DifferentialDriveWheelSpeeds(driveSim.getLeftVelocityMetersPerSecond(), driveSim.getRightVelocityMetersPerSecond());
+    }
+
     return new DifferentialDriveWheelSpeeds(leftOneEncoder.getVelocity() * ROTATIONS_TO_METERS / 60.0, -rightOneEncoder.getVelocity() * ROTATIONS_TO_METERS / 60.0);
   }
 
@@ -229,6 +293,11 @@ public class DriveSystem extends DifferentialDriveSubsystem {
     drive.feed();
     SmartDashboard.putNumber("Left Output Volts", leftVolts);
     SmartDashboard.putNumber("Right Output Volts", rightVolts);
+
+    if (RobotBase.isSimulation()) {
+      leftInputVoltSim = leftVolts;
+      rightInputVoltSim = rightVolts;
+    }
   }
 
   @Override
@@ -242,7 +311,7 @@ public class DriveSystem extends DifferentialDriveSubsystem {
       setStandard();
     }
 
-    odometer.update(null, leftEncoderSim.getDistance(), rightEncoderSim.getDistance());
+    // odometer.update(null, leftEncoderSim.getDistance(), rightEncoderSim.getDistance());
     gameField.setRobotPose(odometer.getPoseMeters());
 
     Pose2d pos = getRobotPosition();
@@ -264,18 +333,30 @@ public class DriveSystem extends DifferentialDriveSubsystem {
 
   @Override
   protected double getLeftDistance() {
+    // if (RobotBase.isSimulation()) {
+    //   return driveSim.getLeftPositionMeters();
+    // }
+
     return leftOneEncoder.getPosition() * ROTATIONS_TO_METERS;
   }
 
   @Override
   protected double getRightDistance() {
+    // if (RobotBase.isSimulation()) {
+    //   return driveSim.getRightPositionMeters();
+    // }
+
     return -rightOneEncoder.getPosition() * ROTATIONS_TO_METERS;
-  
   }
 
   @Override
   protected void resetEncoders() {
     leftOneEncoder.setPosition(0);
     rightOneEncoder.setPosition(0);
+
+    if (RobotBase.isSimulation()) {
+      leftEncoderPosSim.set(0.0);
+      rightEncoderPosSim.set(0.0);
+    }
   }
 }
